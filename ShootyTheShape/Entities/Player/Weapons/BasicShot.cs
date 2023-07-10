@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ShootyTheShape.Entities.Player.Weapons;
-class HomingPlasmaBurstCannon : Weapon
+class BasicShot : Weapon
 {
 	private float damageMultiplier;
 	internal override float baseDamage { get; set; } = 2f;
@@ -20,7 +20,7 @@ class HomingPlasmaBurstCannon : Weapon
 	internal override float baseAccuracy { get; set; } = .2F;
 	internal override float bulletRadius { get; set; } = 8f;
 
-	public HomingPlasmaBurstCannon(
+	public BasicShot(
 		Entity entityWithWeaponEquipped,
 		float damageMultiplier,
 		float fireRateMultiplier,
@@ -46,14 +46,7 @@ class HomingPlasmaBurstCannon : Weapon
 
 			var bullet = new Bullet(entityWithWeaponEquipped.Position + positionOffset);
 
-			bullet.AddBehaviour(
-				new FollowEntity(
-					entity: bullet,
-					movementType: new SmoothFlying(bullet, baseShotVelocity * shotSpeedMultiplier),
-					targeting: new ClosestEntity(bullet, new() { EntityTypes.enemy })
-				));
-
-			base.ActiveBullets.Add(bullet.Id, bullet);
+			ActiveBullets.Add(bullet.Id, bullet);
 
 			audioService.PlayShotSfx();
 

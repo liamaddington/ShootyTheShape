@@ -129,7 +129,11 @@ public class InputService : GameComponent, IInputService
 
 	public bool SecondaryFire()
 	{
-		throw new NotImplementedException();
+		if (mouseState.RightButton == ButtonState.Pressed)
+		{
+			return true;
+		}
+		return IsRightThumbstickActive();
 	}
 
 	public bool AbilityOne()

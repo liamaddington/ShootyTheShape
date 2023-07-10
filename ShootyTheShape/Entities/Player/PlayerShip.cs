@@ -34,7 +34,7 @@ public class PlayerShip : Entity
 
 	static Random rand = new Random();
 
-	private IInputService inputService;
+	private IInputService _inputService;
 
 	public Quaternion AimQuaternion;
 
@@ -43,14 +43,14 @@ public class PlayerShip : Entity
 
 	private PlayerShip()
 	{
-		this.inputService = (IInputService)GameRoot.ServiceProvider.GetService(typeof(IInputService));
+		_inputService = (IInputService)GameRoot.ServiceProvider.GetService(typeof(IInputService));
 
 		texture = contentService.GetPlayerShipTexture();
 		Position = GameRoot.ScreenSize / 2;
 		Radius = 10;
 
 		PrimaryWeapon = new HomingPlasmaBurstCannon(this, 1, 1, 1, 1);
-
+		SecondaryWeapon = new BasicShot(this, 1, 1, 1, 1);
 	}
 
 	public override void Update()
@@ -76,14 +76,14 @@ public class PlayerShip : Entity
 		CheckShooting();
 		ApplyWeaponCooldowns();
 
-		this.Orientation = inputService.GetAimDirection().ToAngle();
+		this.Orientation = _inputService.GetAimDirection().ToAngle();
 
 	}
 
 	private void MoveShip()
 	{
 		const float speed = 8;
-		Velocity = speed * inputService.GetMovementDirection();
+		Velocity = speed * _inputService.GetMovementDirection();
 		Position += Velocity;
 		Position = Vector2.Clamp(Position, Size / 2, GameRoot.ScreenSize - Size / 2);
 	}
@@ -91,18 +91,28 @@ public class PlayerShip : Entity
 	private void ApplyWeaponCooldowns()
 	{
 		PrimaryWeapon.ApplyCooldowns();
-		//SecondaryWeapon.ApplyCooldowns();
+		SecondaryWeapon.ApplyCooldowns();
 	}
 
 	public void CheckShooting()
 	{
-		if (inputService.PrimaryFire())
+		if (_inputService.PrimaryFire())
 		{
-			Vector2 aim = inputService.GetAimDirection();
+			Vector2 aim = _inputService.GetAimDirection();
 			if (aim.LengthSquared() > 0 && cooldownRemaining <= 0)
 			{
 
 				PrimaryWeapon.Fire();
+			}
+			return;
+		}
+
+		if (_inputService.SecondaryFire())
+		{
+			Vector2 aim = _inputService.GetAimDirection();
+			if (aim.LengthSquared() > 0 && cooldownRemaining <= 0)
+			{
+				SecondaryWeapon.Fire();
 			}
 			return;
 		}

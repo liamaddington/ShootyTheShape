@@ -52,7 +52,7 @@ class ClosestEntity : ITargeting
 
 	private List<EntityTypes> entityTypesToTarget;
 
-	public ClosestEntity(Entity entity, IList<EntityTypes> entityTypesToTarget)
+	public ClosestEntity(Entity entity, List<EntityTypes> entityTypesToTarget)
 	{
 		this.HostEntity = entity;
 		this.targetRange = -1;
@@ -63,7 +63,7 @@ class ClosestEntity : ITargeting
 		AssignDelegatesToEntityManager();
 	}
 
-	public ClosestEntity(Entity entity, float targetRange, IList<EntityTypes> entityTypesToTarget)
+	public ClosestEntity(Entity entity, float targetRange, List<EntityTypes> entityTypesToTarget)
 	{
 		this.HostEntity = entity;
 		this.targetRange = targetRange;
