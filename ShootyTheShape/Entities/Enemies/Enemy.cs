@@ -1,8 +1,9 @@
-﻿using ShootyTheShape.Entities.Enemies.Enums;
-using ShootyTheShape.Entities.Projectiles;
 using System;
+using ShootyTheShape.Entities.Enemies.Enums;
+using ShootyTheShape.Entities.Projectiles;
 
 namespace ShootyTheShape.Entities.Enemies;
+
 public class Enemy : Entity
 {
 	public static Random rand = new Random();
@@ -41,15 +42,15 @@ public class Enemy : Entity
 		Velocity *= 0.8f;
 	}
 
-	public void MoveCollidingEntityFromEntityCollidingWith(Enemy other)
+	public void MoveAwayFromCollidingEnemy(Enemy other)
 	{
-		var d = Position - other.Position;
-		Velocity += 10 * d / (d.LengthSquared() + 1);
+		var distanceFromOtherEnemy = Position - other.Position;
+		Velocity += 10 * distanceFromOtherEnemy / (distanceFromOtherEnemy.LengthSquared() + 1);
 	}
 
 	public void WasShot(Bullet bullet)
 	{
-		HitPoints -= bullet.damage;
+		HitPoints -= bullet.Damage;
 
 		if (HitPoints <= 0)
 		{

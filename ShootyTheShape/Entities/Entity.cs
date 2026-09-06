@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using ShootyTheShape.Services.Audio;
 using System;
-using TheSymbioticShip.Services;
+using Microsoft.Xna.Framework.Graphics;
 using ShootyTheShape.AI;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
 using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities;
@@ -24,14 +24,13 @@ public abstract class Entity : ArtificialIntelligence
 	public Vector2 Velocity;
 
 	public float Orientation = 0.50f;
-	public Vector2 VectoreDistanceToTarget;
+	public Vector2 VectorDistanceToTarget;
 	public float AimDirection = 0.5f;
 
 	public float Radius = 20;   // used for circular collision detection
 	public bool IsExpired = false;      // true if the entity was destroyed and should be deleted.
 
 	public Guid Id { get; set; }
-
 
 	protected Entity()
 	{

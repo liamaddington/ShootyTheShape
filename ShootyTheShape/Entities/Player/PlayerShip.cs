@@ -1,14 +1,11 @@
-﻿using ShootyTheShape.Entities.Player.Weapons;
+using System;
+using ShootyTheShape.Entities.Player.Weapons;
 using ShootyTheShape.Entities.Projectiles;
 using ShootyTheShape.Managers;
 using ShootyTheShape.Services.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Entities.Player;
+
 public class PlayerShip : Entity
 {
 	private static PlayerShip instance;
@@ -17,7 +14,9 @@ public class PlayerShip : Entity
 		get
 		{
 			if (instance == null)
+			{
 				instance = new PlayerShip();
+			}
 
 			return instance;
 		}
@@ -26,7 +25,7 @@ public class PlayerShip : Entity
 	const int cooldownFrames = 10;
 	int cooldownRemaining = 0;
 	int invulnerabilityTimer = 0;
-	public bool invulnerable = false;
+	public bool IsInvulnerable = false;
 
 	int framesUntilRespawn = 0;
 	public bool IsDead { get { return framesUntilRespawn > 0; } }
@@ -34,12 +33,12 @@ public class PlayerShip : Entity
 
 	static Random rand = new Random();
 
-	private IInputService _inputService;
+	private IInputService _inputService { get; }
 
 	public Quaternion AimQuaternion;
 
-	private Weapon PrimaryWeapon;
-	private Weapon SecondaryWeapon;
+	private Weapon _primaryWeapon { get; }
+	private Weapon _secondaryWeapon { get; }
 
 	private PlayerShip()
 	{
@@ -49,8 +48,8 @@ public class PlayerShip : Entity
 		Position = GameRoot.ScreenSize / 2;
 		Radius = 10;
 
-		PrimaryWeapon = new HomingPlasmaBurstCannon(this, 1, 1, 1, 1);
-		SecondaryWeapon = new BasicShot(this, 1, 1, 1, 1);
+		_primaryWeapon = new HomingPlasmaBurstCannon(this, 1, 1, 1, 1);
+		_secondaryWeapon = new BasicShot(this, 1, 1, 1, 1);
 	}
 
 	public override void Update()
@@ -58,7 +57,7 @@ public class PlayerShip : Entity
 		if (IsDead)
 		{
 			--framesUntilRespawn;
-			invulnerable = true;
+			IsInvulnerable = true;
 			invulnerabilityTimer = 100;
 			return;
 		}
@@ -69,7 +68,7 @@ public class PlayerShip : Entity
 		}
 		else
 		{
-			invulnerable = false;
+			IsInvulnerable = false;
 		}
 
 		MoveShip();
@@ -77,7 +76,6 @@ public class PlayerShip : Entity
 		ApplyWeaponCooldowns();
 
 		this.Orientation = _inputService.GetAimDirection().ToAngle();
-
 	}
 
 	private void MoveShip()
@@ -90,8 +88,8 @@ public class PlayerShip : Entity
 
 	private void ApplyWeaponCooldowns()
 	{
-		PrimaryWeapon.ApplyCooldowns();
-		SecondaryWeapon.ApplyCooldowns();
+		_primaryWeapon.ApplyCooldowns();
+		_secondaryWeapon.ApplyCooldowns();
 	}
 
 	public void CheckShooting()
@@ -101,8 +99,7 @@ public class PlayerShip : Entity
 			Vector2 aim = _inputService.GetAimDirection();
 			if (aim.LengthSquared() > 0 && cooldownRemaining <= 0)
 			{
-
-				PrimaryWeapon.Fire();
+				_primaryWeapon.Fire();
 			}
 			return;
 		}
@@ -112,7 +109,7 @@ public class PlayerShip : Entity
 			Vector2 aim = _inputService.GetAimDirection();
 			if (aim.LengthSquared() > 0 && cooldownRemaining <= 0)
 			{
-				SecondaryWeapon.Fire();
+				_secondaryWeapon.Fire();
 			}
 			return;
 		}
@@ -139,7 +136,9 @@ public class PlayerShip : Entity
 	public override void Draw()
 	{
 		if (!IsDead)
+		{
 			base.Draw();
+		}
 	}
 
 	public void Kill()

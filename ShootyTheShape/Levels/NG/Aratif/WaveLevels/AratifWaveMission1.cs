@@ -1,16 +1,13 @@
-﻿using ShootyTheShape.Entities.Enemies.Enums;
+using System.Collections.Generic;
+using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.GameModes.WaveGameMode;
 using ShootyTheShape.Services.Spawning;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Levels.NG.Aratif.WaveLevels;
-class AratifWaveMission1 : ILevel
+
+internal class AratifWaveMission1 : ILevel
 {
-	private WaveGameMode _level;
+	private WaveGameMode _level { get; }
 
 	public AratifWaveMission1()
 	{
@@ -21,8 +18,8 @@ class AratifWaveMission1 : ILevel
 					{
 						new EnemySpawnObject(3, EnemyName.Seeker)
 					},
-					SpawnLimit: 5,
-					KillsUntilNextWave: 20
+					spawnLimit: 5,
+					killsUntilNextWave: 20
 				),
 
 				new EnemyWave(
@@ -31,8 +28,8 @@ class AratifWaveMission1 : ILevel
 						new EnemySpawnObject(spawnChance: 20, EnemyName.Seeker),
 						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher)
 					},
-					SpawnLimit: 8,
-					KillsUntilNextWave: 24
+					spawnLimit: 8,
+					killsUntilNextWave: 24
 				),
 
 				new EnemyWave(
@@ -41,8 +38,8 @@ class AratifWaveMission1 : ILevel
 						new EnemySpawnObject(spawnChance: 20, EnemyName.Seeker),
 						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher)
 					},
-					SpawnLimit: 10,
-					KillsUntilNextWave: 26
+					spawnLimit: 10,
+					killsUntilNextWave: 26
 				),
 
 				new EnemyWave(
@@ -51,8 +48,8 @@ class AratifWaveMission1 : ILevel
 						new EnemySpawnObject(spawnChance: 20, EnemyName.Seeker),
 						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher)
 					},
-					SpawnLimit: 10,
-					KillsUntilNextWave:28
+					spawnLimit: 10,
+					killsUntilNextWave:28
 				),
 
 				new EnemyWave(
@@ -61,8 +58,8 @@ class AratifWaveMission1 : ILevel
 						new EnemySpawnObject(spawnChance: 20, EnemyName.Seeker),
 						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher)
 					},
-					SpawnLimit: 10,
-					KillsUntilNextWave:30
+					spawnLimit: 10,
+					killsUntilNextWave:30
 				),
 
 				new EnemyWave(
@@ -72,8 +69,8 @@ class AratifWaveMission1 : ILevel
 						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher),
 						new EnemySpawnObject(EnemyName.Zain)
 					},
-					SpawnLimit: 5,
-					KillsUntilNextWave: 1
+					spawnLimit: 5,
+					killsUntilNextWave: 1
 				)
 			});
 	}

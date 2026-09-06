@@ -1,50 +1,44 @@
-﻿using ShootyTheShape.AI.Movement;
+using System.Linq;
+using ShootyTheShape.AI.Movement;
 using ShootyTheShape.AI.Movement.MovementsTypes;
 using ShootyTheShape.AI.Targeting;
 using ShootyTheShape.AI.Targeting.TargetingTypes;
 using ShootyTheShape.Entities;
-using System.Linq;
 
 namespace ShootyTheShape.AI.Behaviours;
 
-class FollowEntity : Behaviour
+internal class FollowEntity : Behaviour
 {
-	private float initiaDelayFlightSpeed = 0;
-	private float initialDelayFlightAngle = 0;
-
-
 	public FollowEntity(Entity entity, float acceleration) : base(entity)
 	{
 		movementType = new SmoothFlying(base.MainEntity, acceleration);
-		targeting.Add(new TargetEntity(this.MainEntity));
+		Targets.Add(new TargetEntity(this.MainEntity));
 	}
 
 	public FollowEntity(Entity entity, float acceleration, float initialShotAimAngle, int delayedBehaviourDuration) : base(entity, initialShotAimAngle, delayedBehaviourDuration)
 	{
 		movementType = new SmoothFlying(this.MainEntity, acceleration);
-		targeting.Add(new TargetEntity(this.MainEntity));
+		Targets.Add(new TargetEntity(this.MainEntity));
 	}
 
 	public FollowEntity(Entity entity, IMovementType movementType, ITargeting targeting) : base(entity)
 	{
-		this.targeting.Add(targeting);
+		Targets.Add(targeting);
 		this.movementType = movementType;
 	}
 
 	public FollowEntity(Entity entity, IMovementType movementType, ITargeting targeting, float initialShotAimAngle, int delayedBehaviourDuration) : base(entity, initialShotAimAngle, delayedBehaviourDuration)
 	{
-		this.targeting.Add(targeting);
+		Targets.Add(targeting);
 		this.movementType = movementType;
 	}
 
-
 	public override void BehaviourLogic()
 	{
-		targeting.FirstOrDefault().TargetingLogic();
-		MainEntity.VectoreDistanceToTarget = targeting.FirstOrDefault().VectorDistance;
+		var target = Targets.FirstOrDefault();
+		target.TargetingLogic();
+		MainEntity.VectorDistanceToTarget = target.VectorDistance;
 
 		movementType.MovementLogic();
-
 	}
-
 }

@@ -1,2 +1,2 @@
-﻿global using ShootyTheShape.Extensions;
 global using Microsoft.Xna.Framework;
+global using ShootyTheShape.Extensions;

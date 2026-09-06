@@ -1,12 +1,7 @@
-﻿using Microsoft.Xna.Framework;
 using ShootyTheShape.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.AI.Targeting;
+
 public interface ITargeting
 {
 	Entity HostEntity { get; }
@@ -14,7 +9,7 @@ public interface ITargeting
 
 	Vector2 VectorDistance { get; }
 	float MeasuredDistance { get; }
-	float targetRange { get; }
+	float TargetRange { get; }
 	bool InRange { get; }
 
 	void TargetingLogic();

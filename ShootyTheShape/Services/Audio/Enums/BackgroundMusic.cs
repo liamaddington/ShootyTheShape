@@ -1,4 +1,4 @@
-﻿namespace ShootyTheShape.Services.Audio.Enums;
+namespace ShootyTheShape.Services.Audio.Enums;
 
 public enum BackgroundMusic
 {

@@ -1,16 +1,12 @@
-﻿using ShootyTheShape.Enums;
+using ShootyTheShape.Enums;
 using ShootyTheShape.Menus.MainMenu;
 using ShootyTheShape.Services.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Managers;
+
 public class ScreenStateManager
 {
-	public static GameState currentGameState = GameState.playing;
+	public static GameState CurrentGameState = GameState.Playing;
 
 	private MainMenu mainMenu;
 
@@ -25,17 +21,17 @@ public class ScreenStateManager
 	public void Update()
 	{
 		renderService.StartRenderer();
-		if (currentGameState == GameState.playing)
+		if (CurrentGameState == GameState.Playing)
 		{
 			EntityManager.Update();
 			LevelManager.Update();
 			EntityManager.Draw();
 		}
-		else if (currentGameState == GameState.paused)
+		else if (CurrentGameState == GameState.Paused)
 		{
 			//Create the pause Menu
 		}
-		else if (currentGameState == GameState.mainMenu)
+		else if (CurrentGameState == GameState.MainMenu)
 		{
 			mainMenu.Update();
 			mainMenu.Draw();

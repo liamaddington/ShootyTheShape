@@ -1,27 +1,23 @@
-﻿using ShootyTheShape.Levels;
+using ShootyTheShape.Levels;
 using ShootyTheShape.Levels.NG.Aratif.WaveLevels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Managers;
+
 public static class LevelManager
 {
-	public static int currentLevel = 1;
+	public static int CurrentLevel = 1;
 
-	public static ILevel currentLoadedLevel;
+	public static ILevel CurrentLoadedLevel;
 
 	public static void LoadCurrentLevel()
 	{
-		switch (currentLevel)
+		switch (CurrentLevel)
 		{
 			case 1://TODO Add more levels
-				currentLoadedLevel = new AratifWaveMission1();
+				CurrentLoadedLevel = new AratifWaveMission1();
 				break;
 			case 2:
-				currentLoadedLevel = new AratifWaveMission1();
+				CurrentLoadedLevel = new AratifWaveMission1();
 				break;
 			case 3:
 				break;
@@ -37,9 +33,7 @@ public static class LevelManager
 	}
 	public static void Update()
 	{
-		currentLoadedLevel.Update();
-		currentLoadedLevel.DrawHud();
+		CurrentLoadedLevel.Update();
+		CurrentLoadedLevel.DrawHud();
 	}
-
-
 }

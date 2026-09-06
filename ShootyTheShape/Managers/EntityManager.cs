@@ -1,14 +1,13 @@
-﻿using ShootyTheShape.Entities;
-using ShootyTheShape.Entities.Enemies;
-using ShootyTheShape.Entities.Player;
-using ShootyTheShape.Entities.Projectiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ShootyTheShape.Entities;
+using ShootyTheShape.Entities.Enemies;
+using ShootyTheShape.Entities.Player;
+using ShootyTheShape.Entities.Projectiles;
 
 namespace ShootyTheShape.Managers;
+
 public class EntityManager
 {
 	public delegate void AddNewDistanceMatrixDelegate(Entity entity);
@@ -19,7 +18,6 @@ public class EntityManager
 
 	public delegate void RemoveActiveBulletDelegate(Guid bulletId);
 	public static RemoveActiveBulletDelegate RemoveBulletFromWeaponActiveBulletsDelegate;
-
 
 	public static Dictionary<Guid, Entity> Entities { get; private set; } = new();
 	public static Dictionary<Guid, Enemy> Enemies { get; private set; } = new();
@@ -39,9 +37,13 @@ public class EntityManager
 	public static void Add(Entity entity)
 	{
 		if (!isUpdating)
+		{
 			AddEntity(entity);
+		}
 		else
+		{
 			addedEntities.Add(entity);
+		}
 	}
 
 	private static void AddEntity(Entity entity)
@@ -85,7 +87,9 @@ public class EntityManager
 		isUpdating = false;
 
 		foreach (var entity in addedEntities)
+		{
 			AddEntity(entity);
+		}
 
 		addedEntities.Clear();
 
@@ -140,7 +144,7 @@ public class EntityManager
 
 	private static void HandleCollisionBetweenPlayerAndEnemies(Enemy[] allEnemies)
 	{
-		if (!PlayerShip.Instance.invulnerable)
+		if (!PlayerShip.Instance.IsInvulnerable)
 		{
 			for (int i = 0; i < EnemyCount; i++)
 			{
@@ -156,7 +160,7 @@ public class EntityManager
 
 	private static void HandleCollisionBetweenPlayerAndBosses(Enemy[] allBosses)
 	{
-		if (!PlayerShip.Instance.invulnerable)
+		if (!PlayerShip.Instance.IsInvulnerable)
 		{
 			for (int i = 0; i < BossCount; i++)
 			{
@@ -208,8 +212,8 @@ public class EntityManager
 			{
 				if (IsColliding(allEnemies[i], allEnemies[j]))
 				{
-					allEnemies[i].MoveCollidingEntityFromEntityCollidingWith(allEnemies[j]);
-					allEnemies[j].MoveCollidingEntityFromEntityCollidingWith(allEnemies[i]);
+					allEnemies[i].MoveAwayFromCollidingEnemy(allEnemies[j]);
+					allEnemies[j].MoveAwayFromCollidingEnemy(allEnemies[i]);
 				}
 			}
 		}
@@ -218,7 +222,9 @@ public class EntityManager
 	public static void RemoveAllEnemies()
 	{
 		foreach (var entity in Enemies.Values)
+		{
 			entity.WasTouched();
+		}
 	}
 
 	public static void RemoveAllBosses()
@@ -238,8 +244,8 @@ public class EntityManager
 	public static void Draw()
 	{
 		foreach (var entity in Entities.Values)
+		{
 			entity.Draw();
+		}
 	}
-
-
 }

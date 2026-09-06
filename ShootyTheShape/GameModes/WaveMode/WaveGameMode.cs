@@ -1,59 +1,12 @@
-﻿using ShootyTheShape.Enums;
-using ShootyTheShape.GameModes.WaveMode;
-using ShootyTheShape.Managers;
-using ShootyTheShape.Services.Spawning;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ShootyTheShape.Enums;
+using ShootyTheShape.GameModes.WaveMode;
+using ShootyTheShape.Managers;
 
 namespace ShootyTheShape.GameModes.WaveGameMode;
-public class EnemyWave
-{
-	public int WaveNumber { get; set; }
-	public int SpawnLimit { get; set; }
-	public int KillsUntilNextWave { get; set; }
-	public bool IsBossWave { get; set; } = false;
-	public int BossSpawnLimit { get; set; } = -1;
-	public int WaveDuration { get; set; } = -1;
-	public List<EnemySpawnObject> EnemySpawnObjects { get; set; }
-	public List<EnemySpawnObject> BossSpawnObjects { get; set; }
 
-	public EnemyWave(IList<EnemySpawnObject> EnemySpawnObjects, int SpawnLimit, int KillsUntilNextWave)
-	{
-		this.SpawnLimit = SpawnLimit;
-		this.KillsUntilNextWave = KillsUntilNextWave;
-		this.EnemySpawnObjects = EnemySpawnObjects.ToList();
-	}
-
-	public EnemyWave(IList<EnemySpawnObject> EnemySpawnObjects, int SpawnLimit, int KillsUntilNextWave, int WaveDuration)
-		: this(EnemySpawnObjects, SpawnLimit, KillsUntilNextWave)
-	{
-		this.WaveDuration = WaveDuration;
-	}
-
-	public EnemyWave(IList<EnemySpawnObject> EnemySpawnObjects, IList<EnemySpawnObject> BossSpawnObjects, int SpawnLimit, int KillsUntilNextWave, int WaveDuration)
-		: this(EnemySpawnObjects, SpawnLimit, KillsUntilNextWave)
-	{
-		this.BossSpawnObjects = BossSpawnObjects.ToList();
-		this.BossSpawnLimit = BossSpawnObjects.Count;
-		this.WaveDuration = WaveDuration;
-		this.IsBossWave = true;
-	}
-
-	public EnemyWave(IList<EnemySpawnObject> EnemySpawnObjects, IList<EnemySpawnObject> BossSpawnObjects, int SpawnLimit, int KillsUntilNextWave)
-		: this(EnemySpawnObjects, SpawnLimit, KillsUntilNextWave)
-	{
-		this.BossSpawnObjects = BossSpawnObjects.ToList();
-		this.BossSpawnLimit = BossSpawnObjects.Count;
-		this.WaveDuration = WaveDuration;
-		this.IsBossWave = true;
-	}
-
-}
-
-class WaveGameMode : GameModeBaseClass
+internal class WaveGameMode : GameModeBaseClass
 {
 	private List<EnemyWave> waves { get; }
 	private List<EnemyWave> completedWaves { get; }
@@ -78,10 +31,12 @@ class WaveGameMode : GameModeBaseClass
 
 		base.SpawnService.PopulateSpawnList(currentWave.EnemySpawnObjects);
 		base.SpawnService.PopulateBossSpawnList(currentWave.BossSpawnObjects);
-		base.ContentService.LoadEnemies(currentWave.EnemySpawnObjects.Select(x => x.enemyType).ToList());
+		base.ContentService.LoadEnemies(currentWave.EnemySpawnObjects.Select(x => x.EnemyType).ToList());
 
 		if (currentWave.BossSpawnObjects != null)
-			base.ContentService.LoadEnemies(currentWave.BossSpawnObjects.Select(x => x.enemyType).ToList());
+		{
+			base.ContentService.LoadEnemies(currentWave.BossSpawnObjects.Select(x => x.EnemyType).ToList());
+		}
 
 		base.SpawnService.SpawnBossesUsingSpawnList();
 
@@ -130,7 +85,6 @@ class WaveGameMode : GameModeBaseClass
 		{
 			ProgressToNextWaveOrScreen();
 		}
-
 	}
 
 	public override void CheckAndHandleLoseCondition()
@@ -140,7 +94,9 @@ class WaveGameMode : GameModeBaseClass
 			ResetGameMode();
 			GameRoot.ResetGameInstance();
 			if (currentWave.IsBossWave)
+			{
 				base.SpawnService.SpawnBossesUsingSpawnList();
+			}
 		}
 	}
 
@@ -155,7 +111,7 @@ class WaveGameMode : GameModeBaseClass
 			DisableHud(); //TODO Also unload the component from the Game components list
 			CurrentGameStats.GameTimer.Stop();
 			//TODO: Create wave completed screen showing stats and scoresHandle wave completion screen
-			ScreenStateManager.currentGameState = GameState.mainMenu;
+			ScreenStateManager.CurrentGameState = GameState.MainMenu;
 			return;
 		}
 
@@ -165,7 +121,7 @@ class WaveGameMode : GameModeBaseClass
 
 		base.SpawnService.PopulateSpawnList(currentWave.EnemySpawnObjects);
 		base.SpawnService.PopulateBossSpawnList(currentWave.BossSpawnObjects);
-		base.ContentService.LoadEnemies(currentWave.EnemySpawnObjects.Select(x => x.enemyType).ToList());
+		base.ContentService.LoadEnemies(currentWave.EnemySpawnObjects.Select(x => x.EnemyType).ToList());
 	}
 
 	private void UpdateHudData()
@@ -176,12 +132,12 @@ class WaveGameMode : GameModeBaseClass
 	}
 	public override void EnableHud()
 	{
-		Hud.Visable = true;
+		Hud.Visible = true;
 	}
 
 	public override void DisableHud()
 	{
-		Hud.Visable = false;
+		Hud.Visible = false;
 	}
 
 	private bool NoMoreWavesLeft()
@@ -201,5 +157,4 @@ class WaveGameMode : GameModeBaseClass
 		CurrentGameStats.KillCounter = 0;
 		CurrentGameStats.RemainingLives = 3;
 	}
-
 }

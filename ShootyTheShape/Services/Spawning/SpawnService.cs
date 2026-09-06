@@ -1,18 +1,17 @@
-﻿using ShootyTheShape.Entities.Enemies.Bosses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ShootyTheShape.Entities.Enemies.Bosses;
 using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.Entities.Enemies.Generic;
 using ShootyTheShape.Entities.Player;
 using ShootyTheShape.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Services.Spawning;
-class SpawnService : ISpawnService
+
+internal class SpawnService : ISpawnService
 {
-	static Random rand = new Random();
+	private static Random _random { get; } = new Random();
 
 	private List<EnemySpawnObject> genericEnemySpawnList = new List<EnemySpawnObject>();
 
@@ -21,22 +20,26 @@ class SpawnService : ISpawnService
 	public void PopulateSpawnList(IList<EnemySpawnObject> enemySpawnList)
 	{
 		if (enemySpawnList != null)
+		{
 			this.genericEnemySpawnList = enemySpawnList.ToList();
+		}
 	}
 
 	public void PopulateBossSpawnList(IList<EnemySpawnObject> bossSpawnObjects)
 	{
 		if (bossSpawnObjects != null)
+		{
 			this.bossSpawnList = bossSpawnObjects.ToList();
+		}
 	}
 
 	public void SpawnEnemiesUsingSpawnLists()
 	{
 		foreach (EnemySpawnObject enemySpawnObject in genericEnemySpawnList)
 		{
-			if (rand.Next(enemySpawnObject.SpawnChance) == 0)
+			if (_random.Next(enemySpawnObject.SpawnChance) == 0)
 			{
-				SpawnEnemyOfType(enemySpawnObject.enemyType);
+				SpawnEnemyOfType(enemySpawnObject.EnemyType);
 			}
 		}
 	}
@@ -45,23 +48,23 @@ class SpawnService : ISpawnService
 	{
 		foreach (var bossSpawnObject in bossSpawnList)
 		{
-			SpawnEnemyOfType(bossSpawnObject.enemyType);
+			SpawnEnemyOfType(bossSpawnObject.EnemyType);
 			++EntityManager.TotalBossCount;
 		}
 	}
 
 	public Vector2 GetRandomSpawnPosition()
 	{
-		Vector2 pos;
+		Vector2 spawnPosition;
 
 		//TODO Find a better way to spawn enemies outside the vicinity of the player, perhaps by adjust the random value up to a point where it is possible to spawn instead of random gen'ing until it works
 		do
 		{
-			pos = new Vector2(rand.Next((int)GameRoot.ScreenSize.X), rand.Next((int)GameRoot.ScreenSize.Y));
+			spawnPosition = new Vector2(_random.Next((int)GameRoot.ScreenSize.X), _random.Next((int)GameRoot.ScreenSize.Y));
 		}
-		while (Vector2.DistanceSquared(pos, PlayerShip.Instance.Position) < 300 * 300); //Stop enemies spawning ON the players
+		while (Vector2.DistanceSquared(spawnPosition, PlayerShip.Instance.Position) < 300 * 300); //Stop enemies spawning ON the players
 
-		return pos;
+		return spawnPosition;
 	}
 
 	private void SpawnEnemyOfType(EnemyName enemyTypes)
@@ -82,7 +85,6 @@ class SpawnService : ISpawnService
 				break;
 		}
 	}
-
 
 	//TODO Make it possible to create advance spawn configurations, such as spawn groups that will appear in a predetermined (But still random) area of the screen
 	public Vector2 GetSpawnWithinBounds(Rectangle bounds)

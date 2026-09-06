@@ -1,24 +1,18 @@
-﻿using ShootyTheShape.AI.Behaviours;
+using ShootyTheShape.AI.Behaviours;
 using ShootyTheShape.AI.Movement.MovementsTypes;
-using ShootyTheShape.AI.Targeting;
 using ShootyTheShape.AI.Targeting.TargetingTypes;
 using ShootyTheShape.Entities.Enums;
 using ShootyTheShape.Entities.Projectiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Entities.Player.Weapons;
-class HomingPlasmaBurstCannon : Weapon
+
+internal class HomingPlasmaBurstCannon : Weapon
 {
-	private float damageMultiplier;
-	internal override float baseDamage { get; set; } = 2f;
-	internal override float baseFireRate { get; set; } = 10;
-	internal override float baseShotVelocity { get; set; } = 1f;
-	internal override float baseAccuracy { get; set; } = .2F;
-	internal override float bulletRadius { get; set; } = 8f;
+	internal override float BaseDamage { get; set; } = 2f;
+	internal override float BaseFireRate { get; set; } = 10;
+	internal override float BaseShotVelocity { get; set; } = 1f;
+	internal override float BaseAccuracy { get; set; } = .2F;
+	internal override float BulletRadius { get; set; } = 8f;
 
 	public HomingPlasmaBurstCannon(
 		Entity entityWithWeaponEquipped,
@@ -33,14 +27,14 @@ class HomingPlasmaBurstCannon : Weapon
 			  shotSpeedMultiplier,
 			  accuracyMultiplier)
 	{
-		baseFireRate *= fireRateMultiplier;
+		BaseFireRate *= fireRateMultiplier;
 	}
 
 	public override void Fire()
 	{
 		var aimAngle = inputService.GetAimDirection().ToAngle();
 
-		if (shotCooldown >= baseFireRate)
+		if (ShotCooldown >= BaseFireRate)
 		{
 			var positionOffset = new Vector2(1, 1);
 
@@ -49,17 +43,15 @@ class HomingPlasmaBurstCannon : Weapon
 			bullet.AddBehaviour(
 				new FollowEntity(
 					entity: bullet,
-					movementType: new SmoothFlying(bullet, baseShotVelocity * shotSpeedMultiplier),
-					targeting: new ClosestEntity(bullet, new() { EntityTypes.enemy })
+					movementType: new SmoothFlying(bullet, BaseShotVelocity * ShotSpeedMultiplier),
+					targeting: new ClosestEntity(bullet, new() { EntityTypes.Enemy })
 				));
 
 			base.ActiveBullets.Add(bullet.Id, bullet);
 
 			audioService.PlayShotSfx();
 
-			shotCooldown = 0;
+			ShotCooldown = 0;
 		}
-
 	}
-
 }

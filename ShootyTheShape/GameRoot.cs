@@ -1,7 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+using System;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using ShootyTheShape.Entities.Player;
 using ShootyTheShape.Entities.Projectiles.Enums;
@@ -9,13 +8,13 @@ using ShootyTheShape.Enums;
 using ShootyTheShape.Managers;
 using ShootyTheShape.Menus.MainMenu;
 using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
 using ShootyTheShape.Services.Input;
 using ShootyTheShape.Services.Rendering;
 using ShootyTheShape.Services.Spawning;
-using System;
-using TheSymbioticShip.Services;
 
 namespace ShootyTheShape;
+
 public class GameRoot : Game
 {
 	// some helpful static properties
@@ -24,9 +23,9 @@ public class GameRoot : Game
 	public static Vector2 ScreenSize { get { return new Vector2(Viewport.Width, Viewport.Height); } }
 	public static GameTime GameTime { get; private set; }
 
-	public static GraphicsDeviceManager graphics;
+	public static GraphicsDeviceManager Graphics;
 
-	public static GameState gameState;
+	public static GameState CurrentGameState;
 
 	private IRenderService renderService;
 
@@ -48,14 +47,14 @@ public class GameRoot : Game
 	public GameRoot()
 	{
 		Instance = this;
-		graphics = new GraphicsDeviceManager(this);
+		Graphics = new GraphicsDeviceManager(this);
 
-		graphics.IsFullScreen = false;
+		Graphics.IsFullScreen = false;
 
 		//All textures should be created on the expectation of a 1920x1080 resolution
 		//Scaling will be handled inside the RenderService
-		graphics.PreferredBackBufferWidth = 1920;
-		graphics.PreferredBackBufferHeight = 1080;
+		Graphics.PreferredBackBufferWidth = 1920;
+		Graphics.PreferredBackBufferHeight = 1080;
 	}
 
 	protected override void Initialize()
@@ -69,13 +68,13 @@ public class GameRoot : Game
 
 		GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-		PresentationParameters pp = GraphicsDevice.PresentationParameters;
+		PresentationParameters presentationParameters = GraphicsDevice.PresentationParameters;
 		renderService = new RenderService(this,
 			GraphicsDevice,
-			pp.BackBufferWidth,
-			pp.BackBufferHeight,
+			presentationParameters.BackBufferWidth,
+			presentationParameters.BackBufferHeight,
 			false,
-			pp.BackBufferFormat,
+			presentationParameters.BackBufferFormat,
 			DepthFormat.Depth24,
 			new SpriteBatch(GraphicsDevice));
 
@@ -112,7 +111,6 @@ public class GameRoot : Game
 		LevelManager.LoadCurrentLevel();
 
 		this.screenStateManager = new ScreenStateManager(new MainMenu());
-
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -122,7 +120,9 @@ public class GameRoot : Game
 
 		// Allows the game to exit
 		if (input.ExitGame())
+		{
 			this.Exit();
+		}
 
 		screenStateManager.Update();
 

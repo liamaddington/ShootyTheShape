@@ -1,14 +1,10 @@
-﻿using ShootyTheShape.AI.Behaviours;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ShootyTheShape.AI.Behaviours;
 
 namespace ShootyTheShape.Entities.Projectiles;
-interface IBullet
+
+internal interface IBullet
 {
-	int damage { get; set; }
+	int Damage { get; set; }
 
 	void Update();
 	void AddBehaviour(Behaviour behaviour);

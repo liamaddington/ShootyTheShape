@@ -1,52 +1,47 @@
-﻿using ShootyTheShape.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ShootyTheShape.Entities;
 
 namespace ShootyTheShape.AI.Movement.MovementsTypes;
+
 public class SmoothFlying : IMovementType
 {
-	float speed = 0.6f;
-	float acceleration = -1f;
-	Entity entity;
+	private float _speed { get; }
+	private float _acceleration { get; }
+	private Entity _entity { get; }
 
-	public SmoothFlying(Entity entity)
+	public SmoothFlying(Entity entity) : this(entity, 0.6f)
 	{
-		this.entity = entity;
 	}
 
 	//TODO: Think about how acceleration could be used without resorting to -1 checking values
 	public SmoothFlying(Entity entity, float speed, float acceleration = -1)
 	{
-		this.entity = entity;
-		this.speed = speed;
-		this.acceleration = acceleration;
+		_entity = entity;
+		_speed = speed;
+		_acceleration = acceleration;
 	}
 
 	public void MovementLogic()
 	{
-		if (entity.VectoreDistanceToTarget.X != 0 && entity.VectoreDistanceToTarget.Y != 0) //Don't want to divide by 0
+		if (_entity.VectorDistanceToTarget.X != 0 && _entity.VectorDistanceToTarget.Y != 0) //Don't want to divide by 0
 		{
-			if (acceleration == -1)
+			if (_acceleration == -1)
 			{
-				entity.Velocity += entity.VectoreDistanceToTarget * (speed / entity.VectoreDistanceToTarget.Length());
+				_entity.Velocity += _entity.VectorDistanceToTarget * (_speed / _entity.VectorDistanceToTarget.Length());
 			}
 			else
 			{
-				MovementLogicWithAccel();
+				MoveWithAcceleration();
 			}
 		}
 	}
 
-	public void DeselerateLogic()
+	public void DecelerateLogic()
 	{
-		//entity.Velocity -= entity.Velocity * (speed / entity.Velocity.Length());
+		// Smooth flying currently relies on the entity to apply drag.
 	}
 
-	public void MovementLogicWithAccel()
+	public void MoveWithAcceleration()
 	{
-		entity.Velocity += entity.VectoreDistanceToTarget * ((speed * acceleration) / (entity.TargetPosition - entity.Position).Length());
+		_entity.Velocity += _entity.VectorDistanceToTarget * ((_speed * _acceleration) / (_entity.TargetPosition - _entity.Position).Length());
 	}
 }

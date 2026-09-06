@@ -1,18 +1,14 @@
-﻿using ShootyTheShape.AI.Behaviours;
-using ShootyTheShape.Entities;
-using ShootyTheShape;
 using System;
 using ShootyTheShape.AI.Targeting.TargetingTypes;
+using ShootyTheShape.Entities;
 
 namespace ShootyTheShape.AI.Behaviours;
 
-class SinglePathWonder : Behaviour
+internal class SinglePathWonder : Behaviour
 {
-	float speed = 1f;
-
 	public SinglePathWonder(Entity entity) : base(entity)
 	{
-		targeting.Add(new FreeRoam(entity));
+		Targets.Add(new FreeRoam(entity));
 	}
 
 	public override void BehaviourLogic()

@@ -1,18 +1,11 @@
-﻿using ShootyTheShape.Entities.Projectiles;
+using System;
+using System.Collections.Generic;
+using ShootyTheShape.Entities.Projectiles;
 using ShootyTheShape.Managers;
 using ShootyTheShape.Services.Audio;
 using ShootyTheShape.Services.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Entities.Player.Weapons;
-interface IWeapon
-{
-
-}
 
 public abstract class Weapon : IWeapon
 {
@@ -23,21 +16,21 @@ public abstract class Weapon : IWeapon
 
 	protected Entity entityWithWeaponEquipped;
 
-	internal virtual float baseDamage { get; set; }
-	internal float damageMultiplier { get; set; }
+	internal virtual float BaseDamage { get; set; }
+	internal float DamageMultiplier { get; set; }
 
-	internal abstract float baseFireRate { get; set; }
-	internal float fireRateMultiplier { get; set; }
+	internal abstract float BaseFireRate { get; set; }
+	internal float FireRateMultiplier { get; set; }
 
-	internal abstract float baseShotVelocity { get; set; }
-	internal float shotSpeedMultiplier { get; set; }
+	internal abstract float BaseShotVelocity { get; set; }
+	internal float ShotSpeedMultiplier { get; set; }
 
-	internal abstract float baseAccuracy { get; set; }
-	internal float accuracyMultiplier { get; set; }
+	internal abstract float BaseAccuracy { get; set; }
+	internal float AccuracyMultiplier { get; set; }
 
-	internal abstract float bulletRadius { get; set; }
+	internal abstract float BulletRadius { get; set; }
 
-	internal float shotCooldown { get; set; } = 0;
+	internal float ShotCooldown { get; set; } = 0;
 
 	internal Weapon(Entity entityWithWeaponEquipped,
 		float damageMultiplier,
@@ -47,10 +40,10 @@ public abstract class Weapon : IWeapon
 	{
 		this.entityWithWeaponEquipped = entityWithWeaponEquipped;
 
-		this.damageMultiplier = damageMultiplier;
-		this.fireRateMultiplier = fireRateMultiplier;
-		this.shotSpeedMultiplier = shotSpeedMultiplier;
-		this.accuracyMultiplier = accuracyMultiplier;
+		this.DamageMultiplier = damageMultiplier;
+		this.FireRateMultiplier = fireRateMultiplier;
+		this.ShotSpeedMultiplier = shotSpeedMultiplier;
+		this.AccuracyMultiplier = accuracyMultiplier;
 
 		inputService = (IInputService)GameRoot.ServiceProvider.GetService(typeof(IInputService));
 		audioService = (IAudioService)GameRoot.ServiceProvider.GetService(typeof(IAudioService));
@@ -62,8 +55,10 @@ public abstract class Weapon : IWeapon
 
 	public void ApplyCooldowns()
 	{
-		if (shotCooldown <= baseFireRate)
-			shotCooldown++;
+		if (ShotCooldown <= BaseFireRate)
+		{
+			ShotCooldown++;
+		}
 	}
 
 	public void RemoveFromActiveBullets(Guid bulletId)

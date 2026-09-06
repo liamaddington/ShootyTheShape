@@ -1,4 +1,4 @@
-﻿using ShootyTheShape.Services.Audio.Enums;
+using ShootyTheShape.Services.Audio.Enums;
 
 namespace ShootyTheShape.Services.Audio;
 
@@ -31,5 +31,4 @@ public interface IAudioService
 	void MuteSfx();
 
 	void UnmuteSfx();
-
 }

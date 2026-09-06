@@ -1,12 +1,9 @@
-﻿using Microsoft.Xna.Framework.Input;
-using ShootyTheShape.Entities.Player;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Input;
+using ShootyTheShape.Entities.Player;
 
 namespace ShootyTheShape.Services.Input;
+
 public class InputService : GameComponent, IInputService
 {
 	private KeyboardState keyboardState, lastKeyboardState;
@@ -35,7 +32,6 @@ public class InputService : GameComponent, IInputService
 	{
 		this.exitGameKey = Keys.Escape;
 		this.exitGameButton = Buttons.Start;
-
 
 		this.abilityOneButtonState = keyboardState[Keys.NumPad1];
 		this.abilityTwoButtonState = keyboardState[Keys.NumPad2];
@@ -88,17 +84,30 @@ public class InputService : GameComponent, IInputService
 		direction.Y *= -1;  // invert the y-axis
 
 		if (keyboardState.IsKeyDown(Keys.A))
+		{
 			direction.X -= 1;
+		}
+
 		if (keyboardState.IsKeyDown(Keys.D))
+		{
 			direction.X += 1;
+		}
+
 		if (keyboardState.IsKeyDown(Keys.W))
+		{
 			direction.Y -= 1;
+		}
+
 		if (keyboardState.IsKeyDown(Keys.S))
+		{
 			direction.Y += 1;
+		}
 
 		// Clamp the length of the vector to a maximum of 1.
 		if (direction.LengthSquared() > 1)
+		{
 			direction.Normalize();
+		}
 
 		return direction;
 	}
@@ -113,9 +122,13 @@ public class InputService : GameComponent, IInputService
 		Vector2 direction = MousePosition.PositionalOffset() - PlayerShip.Instance.Position;
 
 		if (direction == Vector2.Zero)
+		{
 			return Vector2.Zero;
+		}
 		else
+		{
 			return Vector2.Normalize(direction);
+		}
 	}
 
 	public bool PrimaryFire()

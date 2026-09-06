@@ -1,25 +1,19 @@
-﻿using ShootyTheShape.Entities.Enemies.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ShootyTheShape.Entities.Enemies.Enums;
 
 namespace ShootyTheShape.Services.Spawning;
+
 public class EnemySpawnObject
 {
 	public int SpawnChance { get; set; }
-	public EnemyName enemyType { get; set; }
+	public EnemyName EnemyType { get; set; }
 
 	public EnemySpawnObject(int spawnChance, EnemyName enemyType)
 	{
 		this.SpawnChance = spawnChance;
-		this.enemyType = enemyType;
+		this.EnemyType = enemyType;
 	}
 
-	public EnemySpawnObject(EnemyName enemyType)
+	public EnemySpawnObject(EnemyName enemyType) : this(-1, enemyType)
 	{
-		this.SpawnChance = -1;
-		this.enemyType = enemyType;
 	}
 }

@@ -1,12 +1,8 @@
-﻿using ShootyTheShape.Entities;
+using ShootyTheShape.Entities;
 using ShootyTheShape.Entities.Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.AI.Targeting.TargetingTypes;
+
 public class TargetEntity : ITargeting
 {
 	public Entity HostEntity { get; private set; }
@@ -15,12 +11,12 @@ public class TargetEntity : ITargeting
 
 	public Vector2 VectorDistance { get; private set; }
 	public float MeasuredDistance { get; private set; }
-	public float targetRange { get; private set; }
+	public float TargetRange { get; private set; }
 	public bool InRange { get; private set; }
 
 	public TargetEntity(Entity hostEntity, Entity targetEntity, float targetRange)
 	{
-		this.targetRange = targetRange;
+		this.TargetRange = targetRange;
 		this.HostEntity = hostEntity;
 		this.EntityToTarget = targetEntity;
 
@@ -30,38 +26,23 @@ public class TargetEntity : ITargeting
 
 	public TargetEntity(Entity hostEntity, float targetRange)
 	{
-		this.targetRange = targetRange;
+		this.TargetRange = targetRange;
 		this.HostEntity = hostEntity;
 		this.EntityToTarget = PlayerShip.Instance;
 	}
 
-	public TargetEntity(Entity hostEntity)
+	public TargetEntity(Entity hostEntity) : this(hostEntity, -1)
 	{
-		this.HostEntity = hostEntity;
-		this.targetRange = -1;
-		this.EntityToTarget = PlayerShip.Instance;
 	}
 
 	public void TargetingLogic()
 	{
 		VectorDistance = EntityToTarget.Position - HostEntity.Position;
 		MeasuredDistance = VectorDistance.Length();
-		if (targetRange != -1)
-		{
-			if (MeasuredDistance < targetRange)
-			{
-				HostEntity.AimDirection = VectorDistance.ToAngle();
-				InRange = true;
-			}
-			else
-			{
-				InRange = false;
-			}
-		}
-		else
+		InRange = TargetRange == -1 || MeasuredDistance < TargetRange;
+		if (InRange)
 		{
 			HostEntity.AimDirection = VectorDistance.ToAngle();
-			InRange = true;
 		}
 	}
 }

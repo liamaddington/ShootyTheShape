@@ -1,17 +1,12 @@
-﻿using ShootyTheShape.AI.Behaviours;
+using ShootyTheShape.AI.Behaviours;
 using ShootyTheShape.Entities.Projectiles.Enums;
 using ShootyTheShape.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShootyTheShape.Entities.Projectiles;
 
 public class Bullet : Entity, IBullet
 {
-	public int damage { get; set; } = 1;
+	public int Damage { get; set; } = 1;
 
 	public Bullet(Vector2 position)
 	{
@@ -32,11 +27,13 @@ public class Bullet : Entity, IBullet
 		this.Orientation = Velocity.ToAngle();
 
 		if (!GameRoot.Viewport.Bounds.Contains(Position.ToPoint()))
+		{
 			IsExpired = true;
+		}
 	}
 
 	public void AddBehaviour(Behaviour behaviour)
 	{
-		this.behaviours.Add(behaviour);
+		this.Behaviours.Add(behaviour);
 	}
 }

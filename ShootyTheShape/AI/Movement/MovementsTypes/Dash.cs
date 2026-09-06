@@ -1,73 +1,56 @@
-﻿using ShootyTheShape.Entities;
+using ShootyTheShape.Entities;
 using ShootyTheShape.Entities.Player;
 
 namespace ShootyTheShape.AI.Movement.MovementsTypes;
-class Dash : IMovementType
+
+internal class Dash : IMovementType
 {
-	Entity entity;
+	private Entity _entity { get; }
+	private float _dashSpeed { get; }
+	private int _originalDashCooldown { get; }
+	private int _originalDashDuration { get; }
+	private int dashDuration;
+	private int dashCooldown;
 
-	float dashSpeed = .6f;
-	int dashDuration = 60;
-	int dashCooldown = 60;
-
-	private int originalDashCooldown;
-	private int originalDashDuration;
-
-
-	public Dash(Entity entity)
+	public Dash(Entity entity) : this(entity, .6f, 60, 60)
 	{
-		this.entity = entity;
-
-		SetOriginalValues();
 	}
 
 	public Dash(Entity entity, float dashSpeed, int dashDuration)
+		: this(entity, dashSpeed, dashDuration, 60)
 	{
-		this.entity = entity;
-
-		this.dashSpeed = dashSpeed;
-		this.dashDuration = dashDuration;
-
-		SetOriginalValues();
 	}
 
 	public Dash(Entity entity, float dashSpeed, int dashDuration, int dashCooldown)
 	{
-		this.entity = entity;
-
-		this.dashSpeed = dashSpeed;
+		_entity = entity;
+		_dashSpeed = dashSpeed;
 		this.dashDuration = dashDuration;
 		this.dashCooldown = dashCooldown;
-
-		SetOriginalValues();
-	}
-
-	private void SetOriginalValues()
-	{
-		this.originalDashCooldown = dashCooldown;
-		this.originalDashDuration = dashDuration;
+		_originalDashDuration = dashDuration;
+		_originalDashCooldown = dashCooldown;
 	}
 
 	public void MovementLogic()
 	{
-		if (entity.VectoreDistanceToTarget.X != 0 && entity.VectoreDistanceToTarget.Y != 0)
+		if (_entity.VectorDistanceToTarget.X != 0 && _entity.VectorDistanceToTarget.Y != 0)
 		{
 			dashCooldown--;
 			if (!PlayerShip.Instance.IsDead && dashCooldown == 0)
 			{
 				while (dashDuration > 0)
 				{
-					entity.Velocity += entity.VectoreDistanceToTarget * (dashSpeed / entity.VectoreDistanceToTarget.Length());
+					_entity.Velocity += _entity.VectorDistanceToTarget * (_dashSpeed / _entity.VectorDistanceToTarget.Length());
 					dashDuration--;
 				}
-				dashDuration = originalDashDuration;
-				dashCooldown = originalDashCooldown;
+				dashDuration = _originalDashDuration;
+				dashCooldown = _originalDashCooldown;
 			}
 		}
 	}
 
-	public void DeselerateLogic()
+	public void DecelerateLogic()
 	{
-		//throw new NotImplementedException();
+		// Dashing does not apply deceleration.
 	}
 }

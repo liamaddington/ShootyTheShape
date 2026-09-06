@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ShootyTheShape.AI.Movement.MovementsTypes;
-class Teleport : IMovementType
-{
-	int distance = 20;
-	int cooldown = 150;
 
+internal class Teleport : IMovementType
+{
 	public void MovementLogic()
 	{
 		throw new NotImplementedException();
 	}
 
-	public void DeselerateLogic()
+	public void DecelerateLogic()
 	{
 		throw new NotImplementedException();
 	}
