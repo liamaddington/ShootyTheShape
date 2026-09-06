@@ -81,38 +81,38 @@ public class InputService : GameComponent, IInputService
 		return lastGamepadState.IsButtonUp(button) && gamepadState.IsButtonDown(button);
 	}
 
-	public Vector2 GetMovementDirection()
+	public float GetThrottleInput()
 	{
-		Vector2 direction = gamepadState.ThumbSticks.Left;
-		direction.Y *= -1;  // invert the y-axis
-
-		if (keyboardState.IsKeyDown(Keys.A))
-		{
-			direction.X -= 1;
-		}
-
-		if (keyboardState.IsKeyDown(Keys.D))
-		{
-			direction.X += 1;
-		}
+		float throttleInput = gamepadState.ThumbSticks.Left.Y;
 
 		if (keyboardState.IsKeyDown(Keys.W))
 		{
-			direction.Y -= 1;
+			throttleInput += 1;
 		}
 
 		if (keyboardState.IsKeyDown(Keys.S))
 		{
-			direction.Y += 1;
+			throttleInput -= 1;
 		}
 
-		// Clamp the length of the vector to a maximum of 1.
-		if (direction.LengthSquared() > 1)
+		return MathHelper.Clamp(throttleInput, -1, 1);
+	}
+
+	public float GetSteeringInput()
+	{
+		float steeringInput = gamepadState.ThumbSticks.Left.X;
+
+		if (keyboardState.IsKeyDown(Keys.A))
 		{
-			direction.Normalize();
+			steeringInput -= 1;
 		}
 
-		return direction;
+		if (keyboardState.IsKeyDown(Keys.D))
+		{
+			steeringInput += 1;
+		}
+
+		return MathHelper.Clamp(steeringInput, -1, 1);
 	}
 
 	public bool ExitGame()

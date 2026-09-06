@@ -11,6 +11,13 @@ namespace ShootyTheShape.Entities.Player;
 
 public class PlayerShip : Entity
 {
+	private const float MaximumForwardSpeed = 8f;
+	private const float MaximumReverseSpeed = 4f;
+	private const float ForwardAcceleration = 0.25f;
+	private const float ReverseAcceleration = 0.35f;
+	private const float SteeringSpeed = 0.045f;
+	private const float RollingResistance = 0.04f;
+
 	private static PlayerShip instance;
 	public static PlayerShip Instance
 	{
@@ -46,6 +53,7 @@ public class PlayerShip : Entity
 	static Random rand = new Random();
 
 	private IInputService _inputService { get; }
+	private float _currentMovementSpeed { get; set; }
 
 	public Quaternion AimQuaternion;
 
@@ -64,6 +72,7 @@ public class PlayerShip : Entity
 		texture = contentService.GetPlayerShipTexture();
 		Position = GameRoot.ArenaSize / 2;
 		Radius = 10;
+		Orientation = 0;
 
 		_primaryWeapon = new HomingPlasmaBurstCannon(this, contentService, audioService, renderService, inputService, 1, 1, 1, 1);
 		_secondaryWeapon = new BasicShot(this, contentService, audioService, renderService, inputService, 1, 1, 1, 1);
@@ -91,16 +100,46 @@ public class PlayerShip : Entity
 		MoveShip();
 		CheckShooting();
 		ApplyWeaponCooldowns();
-
-		this.Orientation = _inputService.GetAimDirection().ToAngle();
 	}
 
 	private void MoveShip()
 	{
-		const float speed = 8;
-		Velocity = speed * _inputService.GetMovementDirection();
+		float steeringInput = _inputService.GetSteeringInput();
+		float throttleInput = _inputService.GetThrottleInput();
+
+		Orientation = MathHelper.WrapAngle(Orientation + steeringInput * SteeringSpeed);
+		ApplyThrottle(throttleInput);
+
+		var forwardDirection = new Vector2((float)Math.Cos(Orientation), (float)Math.Sin(Orientation));
+		Velocity = forwardDirection * _currentMovementSpeed;
 		Position += Velocity;
 		Position = GameRoot.ClampToArena(Position, Size / 2);
+	}
+
+	private void ApplyThrottle(float throttleInput)
+	{
+		if (throttleInput > 0)
+		{
+			_currentMovementSpeed += ForwardAcceleration * throttleInput;
+		}
+		else if (throttleInput < 0)
+		{
+			_currentMovementSpeed += ReverseAcceleration * throttleInput;
+		}
+		else
+		{
+			_currentMovementSpeed = MathHelper.Lerp(_currentMovementSpeed, 0, RollingResistance);
+		}
+
+		_currentMovementSpeed = MathHelper.Clamp(
+			_currentMovementSpeed,
+			-MaximumReverseSpeed,
+			MaximumForwardSpeed);
+
+		if (Math.Abs(_currentMovementSpeed) < 0.01f)
+		{
+			_currentMovementSpeed = 0;
+		}
 	}
 
 	private void ApplyWeaponCooldowns()
@@ -162,5 +201,7 @@ public class PlayerShip : Entity
 	{
 		--CurrentGameStats.RemainingLives;
 		framesUntilRespawn = 60;
+		_currentMovementSpeed = 0;
+		Velocity = Vector2.Zero;
 	}
 }

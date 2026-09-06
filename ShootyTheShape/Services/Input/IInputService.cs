@@ -6,7 +6,9 @@ public interface IInputService
 
 	Vector2 MousePosition { get; }
 
-	Vector2 GetMovementDirection();
+	float GetThrottleInput();
+
+	float GetSteeringInput();
 
 	Vector2 GetAimDirection();
 
