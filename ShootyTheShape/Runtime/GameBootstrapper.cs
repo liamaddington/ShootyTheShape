@@ -1,3 +1,5 @@
+using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -18,34 +20,66 @@ public sealed class GameBootstrapper
 	private const string ContentRoot = "Content";
 
 	private GameRoot _game { get; }
+	private IServiceProvider _serviceProvider { get; }
 
 	public IInputService Input { get; private set; }
 	public ScreenStateManager ScreenStateManager { get; private set; }
 
-	public GameBootstrapper(GameRoot game)
+	public GameBootstrapper(GameRoot game, GameSession gameSession)
 	{
 		_game = game;
+		_serviceProvider = BuildServiceProvider(gameSession);
 	}
 
-	public void Initialize(GameSession gameSession)
+	public void Initialize()
 	{
-		IContentService contentService = new ContentService(_game.Services, ContentRoot);
-		IAudioService audioService = new AudioService(_game.Services, ContentRoot);
-		IRenderService renderService = CreateRenderService();
-		Input = new InputService(_game);
-		ISpawnService spawnService = new SpawnService(contentService, audioService, renderService);
+		IContentService contentService = _serviceProvider.GetRequiredService<IContentService>();
+		IAudioService audioService = _serviceProvider.GetRequiredService<IAudioService>();
 
 		LoadAssets(contentService, audioService);
 		ConfigureAudio();
 
-		var playerShip = PlayerShip.Create(contentService, audioService, renderService, Input);
+		var playerShip = PlayerShip.Create(
+			contentService,
+			audioService,
+			_serviceProvider.GetRequiredService<IRenderService>(),
+			_serviceProvider.GetRequiredService<IInputService>());
 		EntityManager.Add(playerShip);
 
-		var levelManager = new LevelManager(spawnService, contentService, renderService, gameSession);
+		var levelManager = _serviceProvider.GetRequiredService<LevelManager>();
 		levelManager.LoadCurrentLevel();
 
-		var mainMenu = new MainMenu(Input, contentService, renderService, gameSession, _game.Exit);
-		ScreenStateManager = new ScreenStateManager(gameSession, mainMenu, renderService, levelManager);
+		Input = _serviceProvider.GetRequiredService<IInputService>();
+		ScreenStateManager = _serviceProvider.GetRequiredService<ScreenStateManager>();
+	}
+
+	public void Dispose()
+	{
+		if (_serviceProvider is IDisposable disposableServiceProvider)
+		{
+			disposableServiceProvider.Dispose();
+		}
+	}
+
+	private IServiceProvider BuildServiceProvider(GameSession gameSession)
+	{
+		var services = new ServiceCollection();
+		services.AddSingleton(gameSession);
+		services.AddSingleton<IContentService>(_ => new ContentService(_game.Services, ContentRoot));
+		services.AddSingleton<IAudioService>(_ => new AudioService(_game.Services, ContentRoot));
+		services.AddSingleton<IRenderService>(_ => CreateRenderService());
+		services.AddSingleton<IInputService>(_ => new InputService(_game));
+		services.AddSingleton<ISpawnService, SpawnService>();
+		services.AddSingleton<LevelManager>();
+		services.AddSingleton<MainMenu>(serviceProvider => new MainMenu(
+			serviceProvider.GetRequiredService<IInputService>(),
+			serviceProvider.GetRequiredService<IContentService>(),
+			serviceProvider.GetRequiredService<IRenderService>(),
+			serviceProvider.GetRequiredService<GameSession>(),
+			_game.Exit));
+		services.AddSingleton<ScreenStateManager>();
+
+		return services.BuildServiceProvider();
 	}
 
 	private IRenderService CreateRenderService()

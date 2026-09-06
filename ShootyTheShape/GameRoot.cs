@@ -38,8 +38,8 @@ public class GameRoot : Game
 
 		this.IsMouseVisible = true;
 		var gameSession = new GameSession();
-		_bootstrapper = new GameBootstrapper(this);
-		_bootstrapper.Initialize(gameSession);
+		_bootstrapper = new GameBootstrapper(this, gameSession);
+		_bootstrapper.Initialize();
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -56,6 +56,16 @@ public class GameRoot : Game
 		_bootstrapper.ScreenStateManager.Update();
 
 		base.Update(gameTime);
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			_bootstrapper?.Dispose();
+		}
+
+		base.Dispose(disposing);
 	}
 
 }
