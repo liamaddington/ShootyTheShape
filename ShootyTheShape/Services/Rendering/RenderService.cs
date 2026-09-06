@@ -4,12 +4,15 @@ namespace ShootyTheShape.Services.Rendering;
 
 public class RenderService : IRenderService
 {
+	private const float CameraFollowSmoothing = 0.1f;
+
 	private RenderTarget2D _mainRenderTarget { get; }
 	private SpriteBatch _spriteBatch { get; }
 
 	private GraphicsDevice _graphicsDevice { get; }
 	private Vector2 _renderTargetSize { get; }
 	private Vector2 _cameraPosition { get; set; }
+	private bool _cameraHasBeenInitialized { get; set; }
 
 	public RenderService(Game game,
 		GraphicsDevice graphicsDevice,
@@ -95,8 +98,17 @@ public class RenderService : IRenderService
 		Vector2 halfScreenSize = _renderTargetSize / 2f;
 		Vector2 minimumCameraPosition = halfScreenSize;
 		Vector2 maximumCameraPosition = GameRoot.ArenaSize - halfScreenSize;
+		Vector2 targetCameraPosition = Vector2.Clamp(worldPosition, minimumCameraPosition, maximumCameraPosition);
 
-		_cameraPosition = Vector2.Clamp(worldPosition, minimumCameraPosition, maximumCameraPosition);
+		if (!_cameraHasBeenInitialized)
+		{
+			_cameraPosition = targetCameraPosition;
+			_cameraHasBeenInitialized = true;
+			return;
+		}
+
+		_cameraPosition = Vector2.Lerp(_cameraPosition, targetCameraPosition, CameraFollowSmoothing);
+		_cameraPosition = Vector2.Clamp(_cameraPosition, minimumCameraPosition, maximumCameraPosition);
 	}
 
 	public Vector2 ScreenToWorld(Vector2 screenPosition)
