@@ -73,7 +73,10 @@ internal class AratifWaveMission1 : ILevel
 					new List<EnemySpawnObject>
 					{
 						new EnemySpawnObject(spawnChance: 10, EnemyName.Seeker),
-						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher),
+						new EnemySpawnObject(spawnChance: 10, EnemyName.Dasher)
+					},
+					new List<EnemySpawnObject>
+					{
 						new EnemySpawnObject(EnemyName.Zain)
 					},
 					spawnLimit: 5,

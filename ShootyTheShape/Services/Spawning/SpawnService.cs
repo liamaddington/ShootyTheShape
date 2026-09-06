@@ -50,7 +50,7 @@ internal class SpawnService : ISpawnService
 	{
 		foreach (EnemySpawnObject enemySpawnObject in genericEnemySpawnList)
 		{
-			if (_random.Next(enemySpawnObject.SpawnChance) == 0)
+			if (enemySpawnObject.SpawnChance > 0 && _random.Next(enemySpawnObject.SpawnChance) == 0)
 			{
 				SpawnEnemyOfType(enemySpawnObject.EnemyType);
 			}

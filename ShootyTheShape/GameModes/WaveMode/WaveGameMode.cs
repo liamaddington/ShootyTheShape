@@ -129,6 +129,11 @@ internal class WaveGameMode : GameModeBaseClass
 		SpawnService.PopulateSpawnList(currentWave.EnemySpawnObjects);
 		SpawnService.PopulateBossSpawnList(currentWave.BossSpawnObjects);
 		ContentService.LoadEnemies(currentWave.EnemySpawnObjects.Select(x => x.EnemyType).ToList());
+
+		if (currentWave.BossSpawnObjects != null)
+		{
+			ContentService.LoadEnemies(currentWave.BossSpawnObjects.Select(x => x.EnemyType).ToList());
+		}
 	}
 
 	private void UpdateHudData()
