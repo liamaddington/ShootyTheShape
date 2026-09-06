@@ -1,6 +1,9 @@
 using ShootyTheShape.AI.Behaviours;
 using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.Managers;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Enemies.Generic;
 
@@ -8,7 +11,8 @@ internal class Seeker : Enemy
 {
 	public EnemyName EnemyName = EnemyName.Seeker;
 
-	public Seeker(Vector2 position) : base(position)
+	public Seeker(Vector2 position, IContentService contentService, IAudioService audioService, IRenderService renderService)
+		: base(position, contentService, audioService, renderService)
 	{
 		base.texture = contentService.GetEnemyTexture(EnemyName);
 		base.HitPoints = 1;

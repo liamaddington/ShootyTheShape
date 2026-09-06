@@ -1,13 +1,29 @@
 using ShootyTheShape.Levels;
+using ShootyTheShape.Runtime;
 using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 using ShootyTheShape.Services.Spawning;
 
 namespace ShootyTheShape.GameModes;
 
 internal abstract class GameModeBaseClass : ILevel
 {
-	public ISpawnService SpawnService;
-	public IContentService ContentService;
+	protected ISpawnService SpawnService { get; }
+	protected IContentService ContentService { get; }
+	protected IRenderService RenderService { get; }
+	protected GameSession GameSession { get; }
+
+	protected GameModeBaseClass(
+		ISpawnService spawnService,
+		IContentService contentService,
+		IRenderService renderService,
+		GameSession gameSession)
+	{
+		SpawnService = spawnService;
+		ContentService = contentService;
+		RenderService = renderService;
+		GameSession = gameSession;
+	}
 
 	public abstract void CheckAndHandleWinCondition();
 	public abstract void CheckAndHandleLoseCondition();
@@ -21,13 +37,4 @@ internal abstract class GameModeBaseClass : ILevel
 	public abstract void EnableHud();
 	public abstract void DisableHud();
 
-	public void LoadSpawnService()
-	{
-		SpawnService = (ISpawnService)GameRoot.ServiceProvider.GetService(typeof(ISpawnService));
-	}
-
-	protected void LoadContentService()
-	{
-		ContentService = (IContentService)GameRoot.ServiceProvider.GetService(typeof(IContentService));
-	}
 }

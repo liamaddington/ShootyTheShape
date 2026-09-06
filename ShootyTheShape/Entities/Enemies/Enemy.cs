@@ -1,6 +1,9 @@
 using System;
 using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.Entities.Projectiles;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Enemies;
 
@@ -15,7 +18,8 @@ public class Enemy : Entity
 	public int HitPoints = 1;
 	public bool IsBoss { get; set; }
 
-	public Enemy(Vector2 position)
+	public Enemy(Vector2 position, IContentService contentService, IAudioService audioService, IRenderService renderService)
+		: base(contentService, audioService, renderService)
 	{
 		Position = position;
 		color = Color.Transparent;

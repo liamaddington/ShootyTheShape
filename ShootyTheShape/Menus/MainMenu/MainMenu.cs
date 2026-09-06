@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using ShootyTheShape.Enums;
 using ShootyTheShape.Menus.MainMenu.Enums;
+using ShootyTheShape.Runtime;
 using ShootyTheShape.Services.Content;
 using ShootyTheShape.Services.Input;
 using ShootyTheShape.Services.Rendering;
@@ -10,90 +11,89 @@ namespace ShootyTheShape.Menus.MainMenu;
 
 public class MainMenu
 {
-	private static Vector2 StartButtonLocation = new Vector2(50, 850);
-	private static Vector2 ExitButtonLocation = new Vector2(550, 850);
+	private Vector2 _startButtonLocation { get; } = new Vector2(50, 850);
+	private Vector2 _exitButtonLocation { get; } = new Vector2(550, 850);
+	private Vector2 _bestTimePosition { get; } = new Vector2(GameRoot.Graphics.PreferredBackBufferWidth - 500, GameRoot.Graphics.PreferredBackBufferHeight - 80);
+	private IContentService _contentService { get; }
+	private IRenderService _renderService { get; }
+	private IInputService _inputService { get; }
+	private GameSession _gameSession { get; }
+	private Action _exitGame { get; }
 
-	//TODO: Remove direct reference to contentService depending on if there is an alternative to static managers
-	private static IContentService contentService = (IContentService)GameRoot.ServiceProvider.GetService(typeof(IContentService));
-	private static IRenderService renderService = (IRenderService)GameRoot.ServiceProvider.GetService(typeof(IRenderService));
+	private Rectangle StartGameRectangle => CreateButtonRectangle(_startButtonLocation, UiButtons.StartGame);
+	private Rectangle ExitGameRectangle => CreateButtonRectangle(_exitButtonLocation, UiButtons.ExitGame);
 
-	private static Rectangle StartGameRectangle = new Rectangle(
-			(int)StartButtonLocation.X, (int)StartButtonLocation.Y,
-			contentService.GetButtonTexture(UiButtons.StartGame).Width,
-			contentService.GetButtonTexture(UiButtons.StartGame).Height);
-
-	private static Rectangle ExitGameRectangle = new Rectangle(
-			(int)ExitButtonLocation.X, (int)ExitButtonLocation.Y,
-			contentService.GetButtonTexture(UiButtons.ExitGame).Width,
-			contentService.GetButtonTexture(UiButtons.ExitGame).Height);
-
-	private IInputService inputService;
-
-	public MainMenu()
+	public MainMenu(IInputService inputService, IContentService contentService, IRenderService renderService, GameSession gameSession, Action exitGame)
 	{
-		inputService = (IInputService)GameRoot.ServiceProvider.GetService(typeof(IInputService));
+		_inputService = inputService;
+		_contentService = contentService;
+		_renderService = renderService;
+		_gameSession = gameSession;
+		_exitGame = exitGame;
 	}
 
 	public void Update()
 	{
-		if (IsStartGameHovered() && inputService.PrimaryFire())
+		if (IsStartGameHovered() && _inputService.PrimaryFire())
 		{
-			GameRoot.CurrentGameState = GameState.Playing;
+			_gameSession.CurrentGameState = GameState.Playing;
 			CurrentGameStats.GameTimer.Restart();
 		}
 
-		if (IsExitGameHovered() && inputService.PrimaryFire())
+		if (IsExitGameHovered() && _inputService.PrimaryFire())
 		{
-			GameRoot.Instance.Exit();
+			_exitGame();
 		}
+	}
+
+	internal void Draw()
+	{
+		_renderService.Draw(_contentService.GetBackground(Backgrounds.MainMenu), Vector2.Zero, Color.White);
+		DrawButtons();
+		DrawBestTime();
+	}
+
+	private Rectangle CreateButtonRectangle(Vector2 location, UiButtons button)
+	{
+		Texture2D texture = _contentService.GetButtonTexture(button);
+		return new Rectangle((int)location.X, (int)location.Y, texture.Width, texture.Height);
 	}
 
 	private bool IsStartGameHovered()
 	{
-		return StartGameRectangle.Contains(inputService.MousePosition);
+		return StartGameRectangle.Contains(_inputService.MousePosition);
 	}
 
 	private bool IsExitGameHovered()
 	{
-		return ExitGameRectangle.Contains(inputService.MousePosition);
+		return ExitGameRectangle.Contains(_inputService.MousePosition);
 	}
 
-	static Vector2 BestTimePosition = new Vector2(GameRoot.Graphics.PreferredBackBufferWidth - 500, GameRoot.Graphics.PreferredBackBufferHeight - 80);
-
-	internal void Draw()
+	private void DrawButtons()
 	{
-		//Draw elements for the main menu
-		renderService.Draw(contentService.GetBackground(Backgrounds.MainMenu), Vector2.Zero, Color.White);
+		UiButtons startButton = IsStartGameHovered() ? UiButtons.StartGameHovered : UiButtons.StartGame;
+		UiButtons exitButton = IsExitGameHovered() ? UiButtons.ExitGameHovered : UiButtons.ExitGame;
 
-		if (IsStartGameHovered())
+		_renderService.Draw(_contentService.GetButtonTexture(startButton), _startButtonLocation, Color.White);
+		_renderService.Draw(_contentService.GetButtonTexture(exitButton), _exitButtonLocation, Color.White);
+	}
+
+	private void DrawBestTime()
+	{
+		if (CurrentGameStats.BestTime == TimeSpan.Zero)
 		{
-			renderService.Draw(contentService.GetButtonTexture(UiButtons.StartGameHovered),
-				StartButtonLocation, Color.White);
-
-			renderService.Draw(contentService.GetButtonTexture(UiButtons.ExitGame),
-			ExitButtonLocation, Color.White);
-		}
-		else if (IsExitGameHovered())
-		{
-			renderService.Draw(contentService.GetButtonTexture(UiButtons.ExitGameHovered),
-			ExitButtonLocation, Color.White);
-
-			renderService.Draw(contentService.GetButtonTexture(UiButtons.StartGame),
-			StartButtonLocation, Color.White);
-		}
-		else
-		{
-			renderService.Draw(contentService.GetButtonTexture(UiButtons.ExitGame),
-			ExitButtonLocation, Color.White);
-
-			renderService.Draw(contentService.GetButtonTexture(UiButtons.StartGame),
-				StartButtonLocation, Color.White);
+			return;
 		}
 
-		if (CurrentGameStats.BestTime != TimeSpan.Zero)
-		{
-			renderService.DrawString(contentService.GetFont(FontStyles.Default), "Best Time: " + CurrentGameStats.BestTime.Minutes + "m:" + CurrentGameStats.BestTime.Seconds + "s",
-			BestTimePosition, Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
-		}
+		_renderService.DrawString(
+			_contentService.GetFont(FontStyles.Default),
+			$"Best Time: {CurrentGameStats.BestTime.Minutes}m:{CurrentGameStats.BestTime.Seconds}s",
+			_bestTimePosition,
+			Color.White,
+			0,
+			Vector2.Zero,
+			1.2f,
+			SpriteEffects.None,
+			0);
 	}
 }

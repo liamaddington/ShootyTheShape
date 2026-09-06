@@ -3,6 +3,10 @@ using ShootyTheShape.AI.Movement.MovementsTypes;
 using ShootyTheShape.AI.Targeting.TargetingTypes;
 using ShootyTheShape.Entities.Enums;
 using ShootyTheShape.Entities.Projectiles;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Input;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Player.Weapons;
 
@@ -16,12 +20,20 @@ internal class HomingPlasmaBurstCannon : Weapon
 
 	public HomingPlasmaBurstCannon(
 		Entity entityWithWeaponEquipped,
+		IContentService contentService,
+		IAudioService audioService,
+		IRenderService renderService,
+		IInputService inputService,
 		float damageMultiplier,
 		float fireRateMultiplier,
 		float shotSpeedMultiplier,
 		float accuracyMultiplier)
 		: base(
 			  entityWithWeaponEquipped,
+			  contentService,
+			  audioService,
+			  renderService,
+			  inputService,
 			  damageMultiplier,
 			  fireRateMultiplier,
 			  shotSpeedMultiplier,
@@ -38,7 +50,7 @@ internal class HomingPlasmaBurstCannon : Weapon
 		{
 			var positionOffset = new Vector2(1, 1);
 
-			var bullet = new Bullet(entityWithWeaponEquipped.Position + positionOffset);
+			var bullet = new Bullet(entityWithWeaponEquipped.Position + positionOffset, contentService, audioService, renderService);
 
 			bullet.AddBehaviour(
 				new FollowEntity(

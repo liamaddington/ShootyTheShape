@@ -14,7 +14,7 @@ using Xunit;
 
 namespace ShootyTheShape.Tests.AI;
 
-// The game stores its service provider and entity notifications globally.
+// Entity targeting subscribes to global entity notifications.
 [CollectionDefinition("Game state", DisableParallelization = true)]
 public class GameStateCollection
 {
@@ -23,14 +23,8 @@ public class GameStateCollection
 [Collection("Game state")]
 public class BehaviourRegressionTests : IDisposable
 {
-	private IServiceProvider _originalServiceProvider { get; } = GameRoot.ServiceProvider;
 	private EntityManager.AddNewDistanceMatrixDelegate _originalEntityAdded { get; } = EntityManager.AddNewEntityToDistanceMatrixDelegate;
 	private EntityManager.RemoveEntityDistanceMatrixDelegate _originalEntityRemoved { get; } = EntityManager.RemoveEntityFromDistanceMatrixDelegate;
-
-	public BehaviourRegressionTests()
-	{
-		GameRoot.ServiceProvider = Substitute.For<IServiceProvider>();
-	}
 
 	[Theory]
 	[InlineData(-1, true)]
@@ -177,13 +171,16 @@ public class BehaviourRegressionTests : IDisposable
 
 	public void Dispose()
 	{
-		GameRoot.ServiceProvider = _originalServiceProvider;
 		EntityManager.AddNewEntityToDistanceMatrixDelegate = _originalEntityAdded;
 		EntityManager.RemoveEntityFromDistanceMatrixDelegate = _originalEntityRemoved;
 	}
 
 	private sealed class TestEntity : Entity
 	{
+		public TestEntity() : base(null, null, null)
+		{
+		}
+
 		public override void Update()
 		{
 		}

@@ -3,12 +3,16 @@ using ShootyTheShape.AI.Movement.MovementsTypes;
 using ShootyTheShape.AI.Targeting.TargetingTypes;
 using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.Managers;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Enemies.Bosses;
 
 internal class Zain : Enemy
 {
-	public Zain(Vector2 position) : base(position)
+	public Zain(Vector2 position, IContentService contentService, IAudioService audioService, IRenderService renderService)
+		: base(position, contentService, audioService, renderService)
 	{
 		base.Name = EnemyName.Zain;
 		texture = contentService.GetEnemyTexture(Name);

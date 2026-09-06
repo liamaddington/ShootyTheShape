@@ -1,4 +1,8 @@
 using ShootyTheShape.Entities.Projectiles;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Input;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Player.Weapons;
 
@@ -12,12 +16,20 @@ internal class BasicShot : Weapon
 
 	public BasicShot(
 		Entity entityWithWeaponEquipped,
+		IContentService contentService,
+		IAudioService audioService,
+		IRenderService renderService,
+		IInputService inputService,
 		float damageMultiplier,
 		float fireRateMultiplier,
 		float shotSpeedMultiplier,
 		float accuracyMultiplier)
 		: base(
 			  entityWithWeaponEquipped,
+			  contentService,
+			  audioService,
+			  renderService,
+			  inputService,
 			  damageMultiplier,
 			  fireRateMultiplier,
 			  shotSpeedMultiplier,
@@ -34,7 +46,7 @@ internal class BasicShot : Weapon
 		{
 			var positionOffset = new Vector2(1, 1);
 
-			var bullet = new Bullet(entityWithWeaponEquipped.Position + positionOffset);
+			var bullet = new Bullet(entityWithWeaponEquipped.Position + positionOffset, contentService, audioService, renderService);
 
 			ActiveBullets.Add(bullet.Id, bullet);
 

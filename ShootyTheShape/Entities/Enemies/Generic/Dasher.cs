@@ -4,6 +4,9 @@ using ShootyTheShape.AI.Targeting.TargetingTypes;
 using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.Entities.Player;
 using ShootyTheShape.Managers;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Enemies.Generic;
 
@@ -11,7 +14,8 @@ internal class Dasher : Enemy
 {
 	public EnemyName EnemyName = Enums.EnemyName.Dasher;
 
-	public Dasher(Vector2 position) : base(position)
+	public Dasher(Vector2 position, IContentService contentService, IAudioService audioService, IRenderService renderService)
+		: base(position, contentService, audioService, renderService)
 	{
 		base.texture = base.contentService.GetEnemyTexture(EnemyName);
 		base.Radius = base.texture.Width / 2f;

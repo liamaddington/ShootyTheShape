@@ -1,23 +1,43 @@
 using ShootyTheShape.Levels;
 using ShootyTheShape.Levels.NG.Aratif.WaveLevels;
+using ShootyTheShape.Runtime;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
+using ShootyTheShape.Services.Spawning;
 
 namespace ShootyTheShape.Managers;
 
-public static class LevelManager
+public class LevelManager
 {
-	public static int CurrentLevel = 1;
+	private ISpawnService _spawnService { get; }
+	private IContentService _contentService { get; }
+	private IRenderService _renderService { get; }
+	private GameSession _gameSession { get; }
 
-	public static ILevel CurrentLoadedLevel;
+	public int CurrentLevel { get; set; } = 1;
+	public ILevel CurrentLoadedLevel { get; private set; }
 
-	public static void LoadCurrentLevel()
+	public LevelManager(
+		ISpawnService spawnService,
+		IContentService contentService,
+		IRenderService renderService,
+		GameSession gameSession)
+	{
+		_spawnService = spawnService;
+		_contentService = contentService;
+		_renderService = renderService;
+		_gameSession = gameSession;
+	}
+
+	public void LoadCurrentLevel()
 	{
 		switch (CurrentLevel)
 		{
 			case 1://TODO Add more levels
-				CurrentLoadedLevel = new AratifWaveMission1();
+				CurrentLoadedLevel = new AratifWaveMission1(_spawnService, _contentService, _renderService, _gameSession);
 				break;
 			case 2:
-				CurrentLoadedLevel = new AratifWaveMission1();
+				CurrentLoadedLevel = new AratifWaveMission1(_spawnService, _contentService, _renderService, _gameSession);
 				break;
 			case 3:
 				break;
@@ -31,7 +51,7 @@ public static class LevelManager
 				break;
 		}
 	}
-	public static void Update()
+	public void Update()
 	{
 		CurrentLoadedLevel.Update();
 		CurrentLoadedLevel.DrawHud();

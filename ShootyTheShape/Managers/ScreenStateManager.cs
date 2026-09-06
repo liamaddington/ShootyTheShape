@@ -1,41 +1,43 @@
 using ShootyTheShape.Enums;
 using ShootyTheShape.Menus.MainMenu;
+using ShootyTheShape.Runtime;
 using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Managers;
 
 public class ScreenStateManager
 {
-	public static GameState CurrentGameState = GameState.Playing;
+	private GameSession _gameSession { get; }
+	private MainMenu _mainMenu { get; }
+	private IRenderService _renderService { get; }
+	private LevelManager _levelManager { get; }
 
-	private MainMenu mainMenu;
-
-	private IRenderService renderService;
-
-	public ScreenStateManager(MainMenu mainMenu)
+	public ScreenStateManager(GameSession gameSession, MainMenu mainMenu, IRenderService renderService, LevelManager levelManager)
 	{
-		this.mainMenu = mainMenu;
-		this.renderService = (IRenderService)GameRoot.ServiceProvider.GetService(typeof(IRenderService));
+		_gameSession = gameSession;
+		_mainMenu = mainMenu;
+		_renderService = renderService;
+		_levelManager = levelManager;
 	}
 
 	public void Update()
 	{
-		renderService.StartRenderer();
-		if (CurrentGameState == GameState.Playing)
+		_renderService.StartRenderer();
+		if (_gameSession.CurrentGameState == GameState.Playing)
 		{
 			EntityManager.Update();
-			LevelManager.Update();
+			_levelManager.Update();
 			EntityManager.Draw();
 		}
-		else if (CurrentGameState == GameState.Paused)
+		else if (_gameSession.CurrentGameState == GameState.Paused)
 		{
 			//Create the pause Menu
 		}
-		else if (CurrentGameState == GameState.MainMenu)
+		else if (_gameSession.CurrentGameState == GameState.MainMenu)
 		{
-			mainMenu.Update();
-			mainMenu.Draw();
+			_mainMenu.Update();
+			_mainMenu.Draw();
 		}
-		renderService.StopRenderer();
+		_renderService.StopRenderer();
 	}
 }

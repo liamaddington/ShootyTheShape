@@ -32,12 +32,11 @@ public abstract class Entity : ArtificialIntelligence
 
 	public Guid Id { get; set; }
 
-	protected Entity()
+	protected Entity(IContentService contentService, IAudioService audioService, IRenderService renderService)
 	{
-		contentService = (IContentService)GameRoot.ServiceProvider.GetService(typeof(IContentService));
-		audioService = (IAudioService)GameRoot.ServiceProvider.GetService(typeof(IAudioService));
-		renderService = (IRenderService)GameRoot.ServiceProvider.GetService(typeof(IRenderService));
-
+		this.contentService = contentService;
+		this.audioService = audioService;
+		this.renderService = renderService;
 		Id = Guid.NewGuid();
 	}
 

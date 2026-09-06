@@ -6,16 +6,29 @@ using ShootyTheShape.Entities.Enemies.Enums;
 using ShootyTheShape.Entities.Enemies.Generic;
 using ShootyTheShape.Entities.Player;
 using ShootyTheShape.Managers;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Services.Spawning;
 
 internal class SpawnService : ISpawnService
 {
 	private static Random _random { get; } = new Random();
+	private IContentService _contentService { get; }
+	private IAudioService _audioService { get; }
+	private IRenderService _renderService { get; }
 
 	private List<EnemySpawnObject> genericEnemySpawnList = new List<EnemySpawnObject>();
 
 	private List<EnemySpawnObject> bossSpawnList = new List<EnemySpawnObject>();
+
+	public SpawnService(IContentService contentService, IAudioService audioService, IRenderService renderService)
+	{
+		_contentService = contentService;
+		_audioService = audioService;
+		_renderService = renderService;
+	}
 
 	public void PopulateSpawnList(IList<EnemySpawnObject> enemySpawnList)
 	{
@@ -72,16 +85,16 @@ internal class SpawnService : ISpawnService
 		switch (enemyTypes)
 		{
 			case EnemyName.Dasher:
-				new Dasher(GetRandomSpawnPosition());
+				new Dasher(GetRandomSpawnPosition(), _contentService, _audioService, _renderService);
 				break;
 			case EnemyName.Seeker:
-				new Seeker(GetRandomSpawnPosition());
+				new Seeker(GetRandomSpawnPosition(), _contentService, _audioService, _renderService);
 				break;
 			case EnemyName.Wanderer:
 				//new Wanderer(GetRandomSpawnPosition()); TODO: Create Wanderer enemy type
 				break;
 			case EnemyName.Zain:
-				new Zain(new Vector2(100, 100)); //TODO: Think of better boss spawn position methods (Come in from the side of the screen)
+				new Zain(new Vector2(100, 100), _contentService, _audioService, _renderService); //TODO: Think of better boss spawn position methods (Come in from the side of the screen)
 				break;
 		}
 	}

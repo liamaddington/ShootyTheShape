@@ -2,7 +2,10 @@ using System;
 using ShootyTheShape.Entities.Player.Weapons;
 using ShootyTheShape.Entities.Projectiles;
 using ShootyTheShape.Managers;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
 using ShootyTheShape.Services.Input;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Player;
 
@@ -13,13 +16,22 @@ public class PlayerShip : Entity
 	{
 		get
 		{
-			if (instance == null)
-			{
-				instance = new PlayerShip();
-			}
-
-			return instance;
+			return instance ?? throw new InvalidOperationException("The player ship must be created during game startup.");
 		}
+	}
+
+	public static PlayerShip Create(
+		IContentService contentService,
+		IAudioService audioService,
+		IRenderService renderService,
+		IInputService inputService)
+	{
+		if (instance == null)
+		{
+			instance = new PlayerShip(contentService, audioService, renderService, inputService);
+		}
+
+		return instance;
 	}
 
 	const int cooldownFrames = 10;
@@ -40,16 +52,21 @@ public class PlayerShip : Entity
 	private Weapon _primaryWeapon { get; }
 	private Weapon _secondaryWeapon { get; }
 
-	private PlayerShip()
+	private PlayerShip(
+		IContentService contentService,
+		IAudioService audioService,
+		IRenderService renderService,
+		IInputService inputService)
+		: base(contentService, audioService, renderService)
 	{
-		_inputService = (IInputService)GameRoot.ServiceProvider.GetService(typeof(IInputService));
+		_inputService = inputService;
 
 		texture = contentService.GetPlayerShipTexture();
 		Position = GameRoot.ScreenSize / 2;
 		Radius = 10;
 
-		_primaryWeapon = new HomingPlasmaBurstCannon(this, 1, 1, 1, 1);
-		_secondaryWeapon = new BasicShot(this, 1, 1, 1, 1);
+		_primaryWeapon = new HomingPlasmaBurstCannon(this, contentService, audioService, renderService, inputService, 1, 1, 1, 1);
+		_secondaryWeapon = new BasicShot(this, contentService, audioService, renderService, inputService, 1, 1, 1, 1);
 	}
 
 	public override void Update()
@@ -125,10 +142,10 @@ public class PlayerShip : Entity
 		Vector2 velocity = 11f * new Vector2((float)Math.Cos(aimAngle + randomSpread), (float)Math.Sin(aimAngle + randomSpread));
 
 		Vector2 offset = Vector2.Transform(new Vector2(35, -8), aimQuat);
-		EntityManager.Add(new WeaponFire(Position + offset, velocity));
+		EntityManager.Add(new WeaponFire(Position + offset, velocity, contentService, audioService, renderService));
 
 		offset = Vector2.Transform(new Vector2(35, 8), aimQuat);
-		EntityManager.Add(new WeaponFire(Position + offset, velocity));
+		EntityManager.Add(new WeaponFire(Position + offset, velocity, contentService, audioService, renderService));
 
 		audioService.PlayShotSfx();
 	}

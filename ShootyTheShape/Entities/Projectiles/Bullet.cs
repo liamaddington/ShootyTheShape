@@ -1,6 +1,9 @@
 using ShootyTheShape.AI.Behaviours;
 using ShootyTheShape.Entities.Projectiles.Enums;
 using ShootyTheShape.Managers;
+using ShootyTheShape.Services.Audio;
+using ShootyTheShape.Services.Content;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Entities.Projectiles;
 
@@ -8,7 +11,8 @@ public class Bullet : Entity, IBullet
 {
 	public int Damage { get; set; } = 1;
 
-	public Bullet(Vector2 position)
+	public Bullet(Vector2 position, IContentService contentService, IAudioService audioService, IRenderService renderService)
+		: base(contentService, audioService, renderService)
 	{
 		texture = contentService.GetBulletTexture(BulletTypes.Bullet);
 		Position = position;

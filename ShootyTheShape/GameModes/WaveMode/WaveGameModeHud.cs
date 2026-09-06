@@ -36,18 +36,16 @@ internal class WaveGameModeHud : IHud
 	private bool IsBossWave { get; }
 	private int BossTotalHP { get; }
 
-	private IContentService contentService;
+	private IContentService _contentService { get; }
 
-	public WaveGameModeHud(bool IsBossWave, int BossTotalHP)
+	public WaveGameModeHud(bool IsBossWave, int BossTotalHP, IContentService contentService, IRenderService renderService)
 	{
 		this.IsBossWave = IsBossWave;
 		this.BossTotalHP = BossTotalHP;
 
-		this._renderService = (IRenderService)GameRoot.ServiceProvider.GetService(typeof(IRenderService));
-
-		this.contentService = (IContentService)GameRoot.ServiceProvider.GetService(typeof(IContentService));
-
-		this.Font = contentService.GetFont(FontStyles.Default);
+		_renderService = renderService;
+		_contentService = contentService;
+		Font = _contentService.GetFont(FontStyles.Default);
 		this.FontScale = .7f;
 	}
 
