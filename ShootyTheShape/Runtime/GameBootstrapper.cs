@@ -35,6 +35,8 @@ public sealed class GameBootstrapper
 	{
 		IContentService contentService = _serviceProvider.GetRequiredService<IContentService>();
 		IAudioService audioService = _serviceProvider.GetRequiredService<IAudioService>();
+		IRenderService renderService = _serviceProvider.GetRequiredService<IRenderService>();
+		IInputService inputService = _serviceProvider.GetRequiredService<IInputService>();
 
 		LoadAssets(contentService, audioService);
 		ConfigureAudio();
@@ -42,9 +44,10 @@ public sealed class GameBootstrapper
 		var playerShip = PlayerShip.Create(
 			contentService,
 			audioService,
-			_serviceProvider.GetRequiredService<IRenderService>(),
-			_serviceProvider.GetRequiredService<IInputService>());
+			renderService,
+			inputService);
 		EntityManager.Add(playerShip);
+		renderService.SetCameraPosition(playerShip.Position);
 
 		var levelManager = _serviceProvider.GetRequiredService<LevelManager>();
 		levelManager.LoadCurrentLevel();
@@ -68,7 +71,9 @@ public sealed class GameBootstrapper
 		services.AddSingleton<IContentService>(_ => new ContentService(_game.Services, ContentRoot));
 		services.AddSingleton<IAudioService>(_ => new AudioService(_game.Services, ContentRoot));
 		services.AddSingleton<IRenderService>(_ => CreateRenderService());
-		services.AddSingleton<IInputService>(_ => new InputService(_game));
+		services.AddSingleton<IInputService>(serviceProvider => new InputService(
+			_game,
+			serviceProvider.GetRequiredService<IRenderService>()));
 		services.AddSingleton<ISpawnService, SpawnService>();
 		services.AddSingleton<LevelManager>();
 		services.AddSingleton<MainMenu>(serviceProvider => new MainMenu(

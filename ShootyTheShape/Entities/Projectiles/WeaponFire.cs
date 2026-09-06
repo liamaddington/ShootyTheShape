@@ -27,8 +27,7 @@ public class WeaponFire : Entity
 		RunAllBehaviours();
 		Position += Velocity;
 
-		// delete bullets that go off-screen
-		if (!GameRoot.Viewport.Bounds.Contains(Position.ToPoint()))
+		if (GameRoot.IsOutsideArena(Position, Radius))
 		{
 			IsExpired = true;
 		}

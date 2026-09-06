@@ -8,6 +8,8 @@ public class RenderService : IRenderService
 	private SpriteBatch _spriteBatch { get; }
 
 	private GraphicsDevice _graphicsDevice { get; }
+	private Vector2 _renderTargetSize { get; }
+	private Vector2 _cameraPosition { get; set; }
 
 	public RenderService(Game game,
 		GraphicsDevice graphicsDevice,
@@ -26,6 +28,7 @@ public class RenderService : IRenderService
 			preferredDepthFormat);
 
 		_graphicsDevice = graphicsDevice;
+		_renderTargetSize = new Vector2(width, height);
 
 		_spriteBatch = spriteBatch;
 	}
@@ -69,6 +72,12 @@ public class RenderService : IRenderService
 		_spriteBatch.Draw(texture, position, color);
 	}
 
+	public void DrawWorld(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin,
+		float scale, SpriteEffects effects, float layerDepth)
+	{
+		Draw(texture, WorldToScreen(position), sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+	}
+
 	public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin,
 		float scale, SpriteEffects effects, float layerDepth)
 	{
@@ -79,6 +88,20 @@ public class RenderService : IRenderService
 		float scale, SpriteEffects effects, float layerDepth)
 	{
 		_spriteBatch.DrawString(spriteFont, text, position, color, rotation, origin, scale, effects, layerDepth);
+	}
+
+	public void SetCameraPosition(Vector2 worldPosition)
+	{
+		Vector2 halfScreenSize = _renderTargetSize / 2f;
+		Vector2 minimumCameraPosition = halfScreenSize;
+		Vector2 maximumCameraPosition = GameRoot.ArenaSize - halfScreenSize;
+
+		_cameraPosition = Vector2.Clamp(worldPosition, minimumCameraPosition, maximumCameraPosition);
+	}
+
+	public Vector2 ScreenToWorld(Vector2 screenPosition)
+	{
+		return screenPosition + _cameraPosition - (_renderTargetSize / 2f);
 	}
 
 	//TODO Find way to use this rather than calculating inside the InputService method
@@ -96,5 +119,10 @@ public class RenderService : IRenderService
 		rectangle.Width *= (_graphicsDevice.Viewport.Width / GameRoot.Graphics.PreferredBackBufferWidth);
 
 		return rectangle;
+	}
+
+	private Vector2 WorldToScreen(Vector2 worldPosition)
+	{
+		return worldPosition - _cameraPosition + (_renderTargetSize / 2f);
 	}
 }

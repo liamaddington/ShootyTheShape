@@ -13,7 +13,7 @@ internal class SinglePathWonder : Behaviour
 
 	public override void BehaviourLogic()
 	{
-		if (!GameRoot.Viewport.Bounds.Contains(MainEntity.Position.ToPoint()))
+		if (GameRoot.IsOutsideArena(MainEntity.Position, MainEntity.Radius))
 		{
 			//TODO: Correct pathing to keep on-screen
 		}

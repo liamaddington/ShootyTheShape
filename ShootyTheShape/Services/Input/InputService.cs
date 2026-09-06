@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework.Input;
 using ShootyTheShape.Entities.Player;
+using ShootyTheShape.Services.Rendering;
 
 namespace ShootyTheShape.Services.Input;
 
@@ -27,9 +28,11 @@ public class InputService : GameComponent, IInputService
 	private KeyState ultimateButtonState;
 
 	private KeyState dashButtonState;
+	private IRenderService _renderService { get; }
 
-	public InputService(Game game) : base(game)
+	public InputService(Game game, IRenderService renderService) : base(game)
 	{
+		_renderService = renderService;
 		this.exitGameKey = Keys.Escape;
 		this.exitGameButton = Buttons.Start;
 
@@ -119,7 +122,8 @@ public class InputService : GameComponent, IInputService
 
 	public Vector2 GetAimDirection()
 	{
-		Vector2 direction = MousePosition.PositionalOffset() - PlayerShip.Instance.Position;
+		Vector2 mouseWorldPosition = _renderService.ScreenToWorld(MousePosition.PositionalOffset());
+		Vector2 direction = mouseWorldPosition - PlayerShip.Instance.Position;
 
 		if (direction == Vector2.Zero)
 		{

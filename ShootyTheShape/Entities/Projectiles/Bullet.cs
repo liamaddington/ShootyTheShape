@@ -30,7 +30,7 @@ public class Bullet : Entity, IBullet
 
 		this.Orientation = Velocity.ToAngle();
 
-		if (!GameRoot.Viewport.Bounds.Contains(Position.ToPoint()))
+		if (GameRoot.IsOutsideArena(Position, Radius))
 		{
 			IsExpired = true;
 		}

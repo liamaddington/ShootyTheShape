@@ -73,7 +73,7 @@ internal class SpawnService : ISpawnService
 		//TODO Find a better way to spawn enemies outside the vicinity of the player, perhaps by adjust the random value up to a point where it is possible to spawn instead of random gen'ing until it works
 		do
 		{
-			spawnPosition = new Vector2(_random.Next((int)GameRoot.ScreenSize.X), _random.Next((int)GameRoot.ScreenSize.Y));
+			spawnPosition = new Vector2(_random.Next((int)GameRoot.ArenaSize.X), _random.Next((int)GameRoot.ArenaSize.Y));
 		}
 		while (Vector2.DistanceSquared(spawnPosition, PlayerShip.Instance.Position) < 300 * 300); //Stop enemies spawning ON the players
 

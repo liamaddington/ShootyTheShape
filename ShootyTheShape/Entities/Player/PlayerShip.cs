@@ -62,7 +62,7 @@ public class PlayerShip : Entity
 		_inputService = inputService;
 
 		texture = contentService.GetPlayerShipTexture();
-		Position = GameRoot.ScreenSize / 2;
+		Position = GameRoot.ArenaSize / 2;
 		Radius = 10;
 
 		_primaryWeapon = new HomingPlasmaBurstCannon(this, contentService, audioService, renderService, inputService, 1, 1, 1, 1);
@@ -100,7 +100,7 @@ public class PlayerShip : Entity
 		const float speed = 8;
 		Velocity = speed * _inputService.GetMovementDirection();
 		Position += Velocity;
-		Position = Vector2.Clamp(Position, Size / 2, GameRoot.ScreenSize - Size / 2);
+		Position = GameRoot.ClampToArena(Position, Size / 2);
 	}
 
 	private void ApplyWeaponCooldowns()

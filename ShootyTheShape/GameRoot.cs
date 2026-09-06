@@ -5,9 +5,13 @@ namespace ShootyTheShape;
 
 public class GameRoot : Game
 {
+	private const int ArenaScreenCount = 3;
+
 	// some helpful static properties
 	public static Viewport Viewport { get { return Graphics.GraphicsDevice.Viewport; } }
 	public static Vector2 ScreenSize { get { return new Vector2(Viewport.Width, Viewport.Height); } }
+	public static Vector2 ArenaSize { get; private set; }
+	public static Rectangle ArenaBounds => new Rectangle(0, 0, (int)ArenaSize.X, (int)ArenaSize.Y);
 	public static GameTime GameTime { get; private set; }
 
 	public static GraphicsDeviceManager Graphics;
@@ -28,6 +32,22 @@ public class GameRoot : Game
 		//Scaling will be handled inside the RenderService
 		Graphics.PreferredBackBufferWidth = 1920;
 		Graphics.PreferredBackBufferHeight = 1080;
+		ArenaSize = new Vector2(
+			Graphics.PreferredBackBufferWidth * ArenaScreenCount,
+			Graphics.PreferredBackBufferHeight * ArenaScreenCount);
+	}
+
+	public static Vector2 ClampToArena(Vector2 position, Vector2 halfObjectSize)
+	{
+		return Vector2.Clamp(position, halfObjectSize, ArenaSize - halfObjectSize);
+	}
+
+	public static bool IsOutsideArena(Vector2 position, float radius)
+	{
+		return position.X - radius < ArenaBounds.Left ||
+			position.X + radius > ArenaBounds.Right ||
+			position.Y - radius < ArenaBounds.Top ||
+			position.Y + radius > ArenaBounds.Bottom;
 	}
 
 	protected override void Initialize()

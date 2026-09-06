@@ -41,7 +41,7 @@ public class Enemy : Entity
 
 		Position += Velocity;
 		this.Orientation = Velocity.ToAngle();
-		Position = Vector2.Clamp(Position, Size / 2, GameRoot.ScreenSize - Size / 2);
+		Position = GameRoot.ClampToArena(Position, Size / 2);
 
 		Velocity *= 0.8f;
 	}

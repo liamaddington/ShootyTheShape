@@ -1,3 +1,4 @@
+using ShootyTheShape.Entities.Player;
 using ShootyTheShape.Enums;
 using ShootyTheShape.Menus.MainMenu;
 using ShootyTheShape.Runtime;
@@ -27,6 +28,7 @@ public class ScreenStateManager
 		{
 			EntityManager.Update();
 			_levelManager.Update();
+			_renderService.SetCameraPosition(PlayerShip.Instance.Position);
 			EntityManager.Draw();
 		}
 		else if (_gameSession.CurrentGameState == GameState.Paused)

@@ -46,6 +46,6 @@ public abstract class Entity : ArtificialIntelligence
 
 	public virtual void Draw()
 	{
-		renderService.Draw(texture, Position, null, color, Orientation, Size / 2f, scale, 0, 0);
+		renderService.DrawWorld(texture, Position, null, color, Orientation, Size / 2f, scale, 0, 0);
 	}
 }
