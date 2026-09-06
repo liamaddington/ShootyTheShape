@@ -12,8 +12,9 @@ public abstract class Behaviour
 	protected List<ITargeting> targeting { get; set; }
 	protected IMovementType movementType;
 
-	protected Entity entity;
-	protected Vector2 entityInitialSpawnPosition;
+	public Entity MainEntity { get; set; }
+
+	protected Vector2 entityInitialSpawnPosition { get; }
 	private int behaviourDelayDuration = 0;
 	private float initialOrientationAngle;
 
@@ -22,23 +23,15 @@ public abstract class Behaviour
 	public float MeasuredDistance { get; }
 	public bool InRange { get; }
 
-	public Behaviour(Entity entity, float initialOrientationAngle, int behaviourDelayDuration)
+	public Behaviour(Entity entity, float? initialOrientationAngle = null, int? behaviourDelayDuration = null)
 	{
-		this.targeting = new List<ITargeting>();
-		this.entityInitialSpawnPosition = entity.Position;
+		MainEntity = entity;
+		targeting = new List<ITargeting>();
+		entityInitialSpawnPosition = MainEntity.Position;
 
-		this.initialOrientationAngle = initialOrientationAngle;
-		this.behaviourDelayDuration = behaviourDelayDuration;
+		this.initialOrientationAngle = initialOrientationAngle ?? 0;
+		this.behaviourDelayDuration = behaviourDelayDuration ?? 0;
 
-		this.entity = entity;
-	}
-
-	public Behaviour(Entity entity)
-	{
-		this.targeting = new List<ITargeting>();
-		this.entityInitialSpawnPosition = entity.Position;
-
-		this.entity = entity;
 	}
 
 	protected void DelayedBehaviourMovement(float speed, float aimAngle)
@@ -46,9 +39,9 @@ public abstract class Behaviour
 		var movementDirection = new Vector2((float)Math.Cos(aimAngle),
 			(float)Math.Sin(aimAngle));
 
-		VectorDistance = entity.Position - entityInitialSpawnPosition;
+		VectorDistance = MainEntity.Position - entityInitialSpawnPosition;
 
-		entity.Velocity = movementDirection;
+		MainEntity.Velocity = movementDirection;
 	}
 
 	public void RunBehaviour()

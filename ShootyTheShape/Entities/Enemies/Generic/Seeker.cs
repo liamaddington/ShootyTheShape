@@ -21,7 +21,9 @@ class Seeker : Enemy
 		base.HitPoints = 1;
 		base.Radius = base.texture.Width / 2f;
 
-		behaviours.Add(new FollowEntity(entity: this, acceleration: .7f));
+		var followPlayerBehaviour = new FollowEntity(entity: this, acceleration: .7f);
+
+		this.AddBehaviour(followPlayerBehaviour);
 
 		//behaviours.Add(
 		//	new AvoidEntities(

@@ -9,21 +9,20 @@ namespace ShootyTheShape.AI.Behaviours;
 
 class FollowEntity : Behaviour
 {
-
 	private float initiaDelayFlightSpeed = 0;
 	private float initialDelayFlightAngle = 0;
 
 
 	public FollowEntity(Entity entity, float acceleration) : base(entity)
 	{
-		movementType = new SmoothFlying(base.entity, acceleration);
-		targeting.Add(new TargetEntity(this.entity));
+		movementType = new SmoothFlying(base.MainEntity, acceleration);
+		targeting.Add(new TargetEntity(this.MainEntity));
 	}
 
 	public FollowEntity(Entity entity, float acceleration, float initialShotAimAngle, int delayedBehaviourDuration) : base(entity, initialShotAimAngle, delayedBehaviourDuration)
 	{
-		movementType = new SmoothFlying(this.entity, acceleration);
-		targeting.Add(new TargetEntity(this.entity));
+		movementType = new SmoothFlying(this.MainEntity, acceleration);
+		targeting.Add(new TargetEntity(this.MainEntity));
 	}
 
 	public FollowEntity(Entity entity, IMovementType movementType, ITargeting targeting) : base(entity)
@@ -42,7 +41,7 @@ class FollowEntity : Behaviour
 	public override void BehaviourLogic()
 	{
 		targeting.FirstOrDefault().TargetingLogic();
-		entity.VectoreDistanceToTarget = targeting.FirstOrDefault().VectorDistance;
+		MainEntity.VectoreDistanceToTarget = targeting.FirstOrDefault().VectorDistance;
 
 		movementType.MovementLogic();
 

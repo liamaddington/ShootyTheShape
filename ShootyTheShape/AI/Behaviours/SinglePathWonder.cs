@@ -17,7 +17,7 @@ class SinglePathWonder : Behaviour
 
 	public override void BehaviourLogic()
 	{
-		if (!GameRoot.Viewport.Bounds.Contains(entity.Position.ToPoint()))
+		if (!GameRoot.Viewport.Bounds.Contains(MainEntity.Position.ToPoint()))
 		{
 			//TODO: Correct pathing to keep on-screen
 		}

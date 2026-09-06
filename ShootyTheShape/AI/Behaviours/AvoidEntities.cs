@@ -8,16 +8,22 @@ namespace ShootyTheShape.AI.Behaviours;
 
 internal class AvoidEntities : Behaviour
 {
+	
+	public AvoidEntities(Entity entity, AvoidEntitiesConfig config) : base(entity, config.initialAngle, config.initialDelay)
+	{
+
+	}
+
 	//Using default targeting/movementType for behaviour
 	public AvoidEntities(Entity entity, float avoidanceRadius, float avoidanceSpeed) : base(entity)
 	{
-		base.movementType = new SmoothFlying(this.entity, avoidanceSpeed);
-		base.targeting.Add(new TargetEntity(this.entity, avoidanceRadius));
+		base.movementType = new SmoothFlying(this.MainEntity, avoidanceSpeed);
+		base.targeting.Add(new TargetEntity(this.MainEntity, avoidanceRadius));
 	}
 
 	public AvoidEntities(Entity entity, float avoidanceSpeed, ITargeting targeting) : base(entity)
 	{
-		base.movementType = new SmoothFlying(this.entity, avoidanceSpeed);
+		base.movementType = new SmoothFlying(this.MainEntity, avoidanceSpeed);
 		base.targeting.Add(targeting);
 	}
 
@@ -28,20 +34,23 @@ internal class AvoidEntities : Behaviour
 		this.targeting.Add(targeting);
 	}
 
-	public AvoidEntities(Entity entity, float avoidanceRadius, float avoidanceSpeed, float initialShotAimAngle, int delayedBehaviourDuration) : base(entity, initialShotAimAngle, delayedBehaviourDuration)
+	public AvoidEntities(Entity entity, float avoidanceRadius, float avoidanceSpeed, float initialAngle, int initialDelay) 
+		: base(entity, initialAngle, initialDelay)
 	{
-		base.movementType = new SmoothFlying(this.entity, avoidanceSpeed);
-		base.targeting.Add(new TargetEntity(this.entity, avoidanceRadius));
+		base.movementType = new SmoothFlying(this.MainEntity, avoidanceSpeed);
+		base.targeting.Add(new TargetEntity(this.MainEntity, avoidanceRadius));
 	}
 
-	public AvoidEntities(Entity entity, float avoidanceSpeed, ITargeting targeting, float initialShotAimAngle, int delayedBehaviourDuration) : base(entity, initialShotAimAngle, delayedBehaviourDuration)
+	public AvoidEntities(Entity entity, float avoidanceSpeed, ITargeting targeting, float initialShotAimAngle, int delayedBehaviourDuration) 
+		: base(entity, initialShotAimAngle, delayedBehaviourDuration)
 	{
-		base.movementType = new SmoothFlying(this.entity, avoidanceSpeed);
+		base.movementType = new SmoothFlying(this.MainEntity, avoidanceSpeed);
 		base.targeting.Add(targeting);
 	}
 
 	//Passed in targeting/movementType for behaviour
-	public AvoidEntities(Entity entity, IMovementType movementType, ITargeting targeting, float initialShotAimAngle, int delayedBehaviourDuration) : base(entity, initialShotAimAngle, delayedBehaviourDuration)
+	public AvoidEntities(Entity entity, IMovementType movementType, ITargeting targeting, float initialShotAimAngle, int delayedBehaviourDuration) 
+		: base(entity, initialShotAimAngle, delayedBehaviourDuration)
 	{
 		this.movementType = movementType;
 		this.targeting.Add(targeting);
@@ -64,7 +73,7 @@ internal class AvoidEntities : Behaviour
 			target.TargetingLogic();
 			if (target.InRange)
 			{
-				entity.VectoreDistanceToTarget = target.VectorDistance * -1; //
+				MainEntity.VectoreDistanceToTarget = target.VectorDistance * -1; //
 				movementType.MovementLogic();
 			}
 			else
